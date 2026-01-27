@@ -1,20 +1,35 @@
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import './src/services/i18n';
+import { ThemeProvider } from './src/contexts/ThemeContext';
+import { RootNavigator } from './src/navigation/RootNavigator';
+import { useSettingsStore } from './src/store/settingsStore';
+import { useTranslation } from 'react-i18next';
+import { usePremiumRestore } from './src/hooks/usePremiumRestore';
 
-export default function App() {
+function AppContent() {
+  const { settings } = useSettingsStore();
+  const { i18n } = useTranslation();
+
+  // Automatically restore premium purchases on app startup
+  usePremiumRestore();
+
+  useEffect(() => {
+    i18n.changeLanguage(settings.language);
+  }, [settings.language]);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <>
+      <RootNavigator />
       <StatusBar style="auto" />
-    </View>
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}

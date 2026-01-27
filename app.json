@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "temp-biosi",
-    "slug": "temp-biosi",
+    "name": "Time Worth",
+    "slug": "time-worth",
     "version": "1.0.0",
+    "description": "A financial mindfulness app that helps you visualize purchases in terms of time worked",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,18 +14,26 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.timeworth.biosi"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.timeworth.biosi",
+      "versionCode": 1,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d31a14a8-5547-49b2-a182-a3c90b9efeaa"
+      }
     }
   }
 }
