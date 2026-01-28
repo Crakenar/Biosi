@@ -65,7 +65,7 @@ export const CurrencySelectionScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={{ padding: theme.spacing.xl }}>
+        <View style={{ padding: theme.spacing.xl, paddingTop: theme.spacing.xxl * 1.5 }}>
         <ProgressBar currentStep={5} totalSteps={5} />
         <Text
           style={{

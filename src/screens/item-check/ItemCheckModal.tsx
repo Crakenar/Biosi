@@ -121,6 +121,7 @@ export const ItemCheckModal: React.FC = () => {
         contentContainerStyle={{
           flexGrow: 1,
           padding: theme.spacing.xl,
+          paddingTop: theme.spacing.xxl * 1.5
         }}
       >
         <View style={styles.header}>

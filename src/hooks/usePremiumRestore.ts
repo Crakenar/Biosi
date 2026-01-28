@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useSettingsStore } from '../store/settingsStore';
-import { iapService } from '../services/iap';
 
 /**
  * Hook that automatically restores premium purchases on app startup
@@ -26,7 +25,7 @@ export function usePremiumRestore() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         console.log('Checking for previous premium purchases...');
-        const hasPremium = await iapService.restorePurchases();
+        const hasPremium = false;
 
         if (hasPremium) {
           console.log('Premium purchase found! Unlocking premium theme...');

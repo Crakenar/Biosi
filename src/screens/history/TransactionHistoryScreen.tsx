@@ -96,11 +96,12 @@ export const TransactionHistoryScreen: React.FC = () => {
     );
 
     return (
-        <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+        <View style={{flex: 1, backgroundColor: theme.colors.background }}>
             {/* Header */}
             <View style={{
                 padding: theme.spacing.xl,
-                paddingBottom: theme.spacing.md
+                paddingBottom: theme.spacing.md,
+                paddingTop: theme.spacing.xxl * 1.5
             }}>
                 <Text
                     style={{

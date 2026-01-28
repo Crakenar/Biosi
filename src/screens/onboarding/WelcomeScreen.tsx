@@ -22,6 +22,7 @@ export const WelcomeScreen: React.FC = () => {
         {
           backgroundColor: theme.colors.background,
           padding: theme.spacing.xl,
+            paddingTop: theme.spacing.xxl * 1.5
         },
       ]}
     >

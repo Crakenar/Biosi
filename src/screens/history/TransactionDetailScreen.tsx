@@ -65,7 +65,9 @@ export const TransactionDetailScreen: React.FC = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={{ padding: theme.spacing.xl }}>
+      <View style={{ padding: theme.spacing.xl,
+          paddingTop: theme.spacing.xxl * 1.5
+      }}>
         {/* Header */}
         <View style={{ alignItems: 'center', marginBottom: theme.spacing.xl }}>
           <View
