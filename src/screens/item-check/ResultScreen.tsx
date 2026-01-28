@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { DashboardStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useUserStore } from '../../store/userStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { formatHours } from '../../services/calculations';
@@ -19,6 +20,7 @@ export const ResultScreen: React.FC = () => {
   const route = useRoute<ResultRouteProp>();
   const { theme } = useTheme();
   const { user } = useUserStore();
+  const { settings } = useSettingsStore();
     const { t } = useTranslation();
 
   const { type, price, hours } = route.params;
@@ -46,8 +48,8 @@ export const ResultScreen: React.FC = () => {
   const emoji = isPurchase ? '💸' : '🎉';
   const title = isPurchase ? 'Purchase Recorded' : 'Great Choice!';
   const message = isPurchase
-    ? `You spent ${formatHours(hours)} of work on this item.`
-    : `You saved ${formatHours(hours)} of work by not buying this item!`;
+    ? `You spent ${formatHours(hours, settings.workHoursPerDay)} of work on this item.`
+    : `You saved ${formatHours(hours, settings.workHoursPerDay)} of work by not buying this item!`;
 
   return (
     <View
@@ -141,7 +143,7 @@ export const ResultScreen: React.FC = () => {
                 color: isPurchase ? theme.colors.error : theme.colors.success,
               }}
             >
-              {formatHours(hours)}
+              {formatHours(hours, settings.workHoursPerDay)}
             </Text>
           </View>
         </Card>

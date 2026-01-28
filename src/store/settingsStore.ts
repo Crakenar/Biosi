@@ -26,6 +26,7 @@ export const useSettingsStore = create<SettingsStore>()(
         isPremium: false,
         onboardingCompleted: false,
         compoundInterestRate: 0.07,
+        workHoursPerDay: 7,
       },
       updateSettings: (updates) =>
         set((state) => ({

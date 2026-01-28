@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from '../../components/common/Button';
+import { ProgressBar } from '../../components/onboarding/ProgressBar';
 import { useTranslation } from 'react-i18next';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<OnboardingStackParamList, 'Welcome'>;
@@ -25,6 +26,7 @@ export const WelcomeScreen: React.FC = () => {
       ]}
     >
       <View style={styles.content}>
+        <ProgressBar currentStep={1} totalSteps={5} />
         <Text
           style={{
             fontSize: theme.typography.sizes.xxl,

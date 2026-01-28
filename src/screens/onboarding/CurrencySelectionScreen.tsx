@@ -14,6 +14,7 @@ import { useUserStore } from '../../store/userStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
+import { ProgressBar } from '../../components/onboarding/ProgressBar';
 import { CURRENCIES } from '../../constants/config';
 import { normalizeToHourly } from '../../services/calculations';
 import { useTranslation } from 'react-i18next';
@@ -41,8 +42,8 @@ export const CurrencySelectionScreen: React.FC = () => {
   );
 
   const handleComplete = () => {
-    const { name, age, wage } = route.params;
-    const hourlyRate = normalizeToHourly(wage.amount, wage.period);
+    const { name, age, wage, hoursPerWeek } = route.params;
+    const hourlyRate = normalizeToHourly(wage.amount, wage.period, hoursPerWeek);
 
     setUser({
       id: `user_${Date.now()}`,
@@ -53,6 +54,7 @@ export const CurrencySelectionScreen: React.FC = () => {
         ...wage,
         hourlyRate,
       },
+      hoursPerWeek,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -64,6 +66,7 @@ export const CurrencySelectionScreen: React.FC = () => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View style={{ padding: theme.spacing.xl }}>
+        <ProgressBar currentStep={5} totalSteps={5} />
         <Text
           style={{
             fontSize: theme.typography.sizes.xl,

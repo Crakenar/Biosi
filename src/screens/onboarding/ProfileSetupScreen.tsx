@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -7,6 +7,8 @@ import { OnboardingStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
+import { ProgressBar } from '../../components/onboarding/ProgressBar';
+import { MotivationalLoader } from '../../components/onboarding/MotivationalLoader';
 import { APP_CONFIG } from '../../constants/config';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +22,7 @@ interface ProfileForm {
 export const ProfileSetupScreen: React.FC = () => {
   const navigation = useNavigation<ProfileSetupNavigationProp>();
   const { theme } = useTheme();
+  const [showLoader, setShowLoader] = useState(false);
 
   const {
     control,
@@ -46,7 +49,11 @@ export const ProfileSetupScreen: React.FC = () => {
       return;
     }
 
-    navigation.navigate('WageInput', { name: data.name.trim(), age });
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      navigation.navigate('WageInput', { name: data.name.trim(), age });
+    }, 1500);
   };
 
   return (
@@ -63,6 +70,7 @@ export const ProfileSetupScreen: React.FC = () => {
         ]}
       >
         <View style={styles.content}>
+          <ProgressBar currentStep={3} totalSteps={5} />
           <Text
             style={{
               fontSize: theme.typography.sizes.xl,
@@ -145,6 +153,8 @@ export const ProfileSetupScreen: React.FC = () => {
         </View>
 
         <Button title="Next" onPress={handleSubmit(onSubmit)} size="large" />
+
+        <MotivationalLoader visible={showLoader} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

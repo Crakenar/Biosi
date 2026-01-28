@@ -51,7 +51,7 @@ export const DashboardScreen: React.FC = () => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Header */}
-        <View style={{ padding: theme.spacing.xl }}>
+        <View style={{ padding: theme.spacing.xl, paddingTop: theme.spacing.xxl * 1.5 }}>
           <Text
             style={{
               fontSize: theme.typography.sizes.xxl,
@@ -89,7 +89,7 @@ export const DashboardScreen: React.FC = () => {
             <MetricCard
               title={t('dashboard.spent')}
               value={settings.displayMode === 'hours'
-                ? formatHours(monthlyStats.totalHoursSpent)
+                ? formatHours(monthlyStats.totalHoursSpent, settings.workHoursPerDay)
                 : formatCurrency(monthlyStats.totalSpent, user.currency)}
               subtitle={monthlyStats.purchaseCount === 1 ? t('dashboard.purchasesOne', { count: monthlyStats.purchaseCount }) : t('dashboard.purchases', { count: monthlyStats.purchaseCount })}
               color="error"
@@ -98,7 +98,7 @@ export const DashboardScreen: React.FC = () => {
             <MetricCard
               title={t('dashboard.saved')}
               value={settings.displayMode === 'hours'
-                ? formatHours(monthlyStats.totalHoursSaved)
+                ? formatHours(monthlyStats.totalHoursSaved, settings.workHoursPerDay)
                 : formatCurrency(monthlyStats.totalSaved, user.currency)}
               subtitle={monthlyStats.saveCount === 1 ? t('dashboard.savesOne', { count: monthlyStats.saveCount }) : t('dashboard.saves', { count: monthlyStats.saveCount })}
               color="success"
@@ -124,7 +124,7 @@ export const DashboardScreen: React.FC = () => {
             <MetricCard
               title={t('dashboard.spent')}
               value={settings.displayMode === 'hours'
-                ? formatHours(yearlyStats.totalHoursSpent)
+                ? formatHours(yearlyStats.totalHoursSpent, settings.workHoursPerDay)
                 : formatCurrency(yearlyStats.totalSpent, user.currency)}
               subtitle={yearlyStats.purchaseCount === 1 ? t('dashboard.purchasesOne', { count: yearlyStats.purchaseCount }) : t('dashboard.purchases', { count: yearlyStats.purchaseCount })}
               color="error"
@@ -132,7 +132,7 @@ export const DashboardScreen: React.FC = () => {
             <MetricCard
               title={t('dashboard.saved')}
               value={settings.displayMode === 'hours'
-                ? formatHours(yearlyStats.totalHoursSaved)
+                ? formatHours(yearlyStats.totalHoursSaved, settings.workHoursPerDay)
                 : formatCurrency(yearlyStats.totalSaved, user.currency)}
               subtitle={yearlyStats.saveCount === 1 ? t('dashboard.savesOne', { count: yearlyStats.saveCount }) : t('dashboard.saves', { count: yearlyStats.saveCount })}
               color="success"

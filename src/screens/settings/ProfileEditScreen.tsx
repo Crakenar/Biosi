@@ -26,6 +26,7 @@ interface ProfileEditForm {
   name: string;
   age: string;
   wageAmount: string;
+  hoursPerWeek: string;
 }
 
 const PERIODS: Array<{ value: 'hourly' | 'monthly' | 'yearly'; label: string }> = [
@@ -52,16 +53,18 @@ export const ProfileEditScreen: React.FC = () => {
       name: user?.name || '',
       age: user?.age.toString() || '',
       wageAmount: user?.wage.amount.toString() || '',
+      hoursPerWeek: user?.hoursPerWeek?.toString() || '40',
     },
   });
 
   const onSubmit = (data: ProfileEditForm) => {
     const age = parseInt(data.age, 10);
     const wageAmount = parseFloat(data.wageAmount);
+    const hoursPerWeek = parseFloat(data.hoursPerWeek);
 
     if (!user) return;
 
-    const hourlyRate = normalizeToHourly(wageAmount, selectedPeriod);
+    const hourlyRate = normalizeToHourly(wageAmount, selectedPeriod, hoursPerWeek);
 
     updateUser({
       name: data.name.trim(),
@@ -71,6 +74,7 @@ export const ProfileEditScreen: React.FC = () => {
         period: selectedPeriod,
         hourlyRate,
       },
+      hoursPerWeek,
     });
 
     navigation.goBack();
@@ -239,6 +243,33 @@ export const ProfileEditScreen: React.FC = () => {
             </TouchableOpacity>
           ))}
         </View>
+
+        <Controller
+          control={control}
+          rules={{
+            required: 'Hours per week is required',
+            validate: (value) => {
+              const hours = parseFloat(value);
+              if (isNaN(hours)) return 'Hours must be a valid number';
+              if (hours < 1) return 'Hours must be at least 1';
+              if (hours > 168) return 'Hours cannot exceed 168 per week';
+              return true;
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Hours Per Week"
+              placeholder="Enter hours per week"
+              keyboardType="decimal-pad"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.hoursPerWeek?.message}
+              containerStyle={{ marginBottom: theme.spacing.lg }}
+            />
+          )}
+          name="hoursPerWeek"
+        />
 
         <View style={{ marginTop: 'auto', paddingTop: theme.spacing.xl }}>
           <Button title="Save Changes" onPress={handleSubmit(onSubmit)} size="large" />

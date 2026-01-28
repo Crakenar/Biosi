@@ -179,6 +179,12 @@ export const SettingsScreen: React.FC = () => {
                 setDisplayMode(settings.displayMode === 'currency' ? 'hours' : 'currency');
               }}
             />
+            <SettingItem
+              label="Work Hours Per Day"
+              value={`${settings.workHoursPerDay} hours`}
+              icon="⏰"
+              onPress={() => navigation.navigate('WorkHoursSettings')}
+            />
           </View>
         </Card>
 

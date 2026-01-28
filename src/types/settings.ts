@@ -6,4 +6,5 @@ export interface AppSettings {
   isPremium: boolean; // Whether user has purchased premium (financial theme)
   onboardingCompleted: boolean;
   compoundInterestRate: number;
+  workHoursPerDay: number; // Number of hours in a work day (default 7)
 }

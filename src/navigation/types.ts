@@ -7,7 +7,7 @@ export type OnboardingStackParamList = {
   LanguageSelection: undefined;
   ProfileSetup: undefined;
   WageInput: { name: string; age: number };
-  CurrencySelection: { name: string; age: number; wage: { amount: number; period: 'hourly' | 'monthly' | 'yearly' } };
+  CurrencySelection: { name: string; age: number; wage: { amount: number; period: 'hourly' | 'monthly' | 'yearly' }; hoursPerWeek: number };
 };
 
 export type DashboardStackParamList = {
@@ -28,6 +28,7 @@ export type SettingsStackParamList = {
   CurrencySettings: undefined;
   LanguageSettings: undefined;
   PremiumPurchase: undefined;
+  WorkHoursSettings: undefined;
 };
 
 export type AppTabParamList = {

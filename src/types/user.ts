@@ -8,6 +8,7 @@ export interface UserProfile {
     period: 'hourly' | 'monthly' | 'yearly';
     hourlyRate: number;
   };
+  hoursPerWeek: number;
   createdAt: string;
   updatedAt: string;
 }

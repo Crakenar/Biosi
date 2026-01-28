@@ -38,15 +38,13 @@ class IAPService {
     const purchaseUpdateSubscription = RNIap.purchaseUpdatedListener(
       async (purchase) => {
         console.log('Purchase updated:', purchase);
-        const receipt = purchase.transactionReceipt;
+        const receipt = purchase.transactionId;
 
         if (receipt) {
           try {
             // Acknowledge purchase for Android
-            if (Platform.OS === 'android') {
-              await RNIap.acknowledgePurchaseAndroid({
-                token: purchase.purchaseToken || '',
-              });
+            if (Platform.OS === 'android' && purchase.purchaseToken) {
+              await RNIap.acknowledgePurchaseAndroid(purchase.purchaseToken);
             }
 
             // Finish transaction for iOS
@@ -67,12 +65,12 @@ class IAPService {
     );
   }
 
-  async getProducts(): Promise<RNIap.Product[]> {
+  async getProducts(): Promise<any[]> {
     try {
       await this.initialize();
-      const products = await RNIap.getProducts({ skus: [PREMIUM_PRODUCT_ID] });
+      const products = await RNIap.fetchProducts({ skus: [PREMIUM_PRODUCT_ID] });
       console.log('Products fetched:', products);
-      return products;
+      return products || [];
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;
@@ -83,9 +81,7 @@ class IAPService {
     try {
       await this.initialize();
 
-      const purchase = await RNIap.requestPurchase({
-        sku: PREMIUM_PRODUCT_ID,
-      });
+      const purchase = await RNIap.requestPurchase({ sku: PREMIUM_PRODUCT_ID } as any);
 
       console.log('Purchase result:', purchase);
       return true;

@@ -13,6 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { DashboardStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useUserStore } from '../../store/userStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useTransactionStore } from '../../store/transactionStore';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
@@ -27,6 +28,7 @@ export const ItemCheckModal: React.FC = () => {
   const navigation = useNavigation<ItemCheckNavigationProp>();
   const { theme } = useTheme();
   const { user } = useUserStore();
+  const { settings } = useSettingsStore();
   const { addTransaction } = useTransactionStore();
   const { t } = useTranslation();
 
@@ -180,7 +182,7 @@ export const ItemCheckModal: React.FC = () => {
                 marginBottom: theme.spacing.md,
               }}
             >
-              {formatHours(hours)}
+              {formatHours(hours, settings.workHoursPerDay)}
             </Text>
 
             <View

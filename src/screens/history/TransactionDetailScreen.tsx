@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { HistoryStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useUserStore } from '../../store/userStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useTransactionStore } from '../../store/transactionStore';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
+import { DeleteModal } from '../../components/common/DeleteModal';
 import { formatCurrency } from '../../utils/formatters';
 import { formatHours } from '../../services/calculations';
 import { formatDateTime } from '../../utils/dateHelpers';
@@ -25,32 +27,27 @@ export const TransactionDetailScreen: React.FC = () => {
   const { theme } = useTheme();
     const { t } = useTranslation();
   const { user } = useUserStore();
+  const { settings } = useSettingsStore();
 
   const { transactions, deleteTransaction } = useTransactionStore();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const transaction = transactions.find((t) => t.id === route.params.transactionId);
 
   const handleDelete = () => {
-    Alert.alert(
-      t('history.transactionDetail.deleteConfirmTitle'),
-      t('history.transactionDetail.deleteConfirmMessage'),
-      [
-        {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('common.delete'),
-          style: 'destructive',
-          onPress: () => {
-            if (transaction) {
-              deleteTransaction(transaction.id);
-              navigation.goBack();
-            }
-          },
-        },
-      ]
-    );
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (transaction) {
+      deleteTransaction(transaction.id);
+      setShowDeleteModal(false);
+      navigation.goBack();
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   if (!transaction || !user) {
@@ -183,7 +180,7 @@ export const TransactionDetailScreen: React.FC = () => {
                 color: theme.colors.text,
               }}
             >
-              {formatHours(transaction.hoursOfWork)}
+              {formatHours(transaction.hoursOfWork, settings.workHoursPerDay)}
             </Text>
           </View>
 
@@ -264,6 +261,16 @@ export const TransactionDetailScreen: React.FC = () => {
           style={{ borderColor: theme.colors.error }}
         />
       </View>
+
+      <DeleteModal
+        visible={showDeleteModal}
+        title={t('history.transactionDetail.deleteConfirmTitle')}
+        message={t('history.transactionDetail.deleteConfirmMessage')}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
+      />
     </ScrollView>
   );
 };

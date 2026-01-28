@@ -15,6 +15,7 @@ import { ThemeSelectionScreen } from '../screens/settings/ThemeSelectionScreen';
 import { CurrencySettingsScreen } from '../screens/settings/CurrencySettingsScreen';
 import { LanguageSettingsScreen } from '../screens/settings/LanguageSettingsScreen';
 import { PremiumPurchaseScreen } from '../screens/settings/PremiumPurchaseScreen';
+import { WorkHoursSettingsScreen } from '../screens/settings/WorkHoursSettingsScreen';
 
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
 const HistoryStack = createStackNavigator<HistoryStackParamList>();
@@ -52,6 +53,7 @@ function SettingsNavigator() {
       <SettingsStack.Screen name="CurrencySettings" component={CurrencySettingsScreen} />
       <SettingsStack.Screen name="LanguageSettings" component={LanguageSettingsScreen} />
       <SettingsStack.Screen name="PremiumPurchase" component={PremiumPurchaseScreen} />
+      <SettingsStack.Screen name="WorkHoursSettings" component={WorkHoursSettingsScreen} />
     </SettingsStack.Navigator>
   );
 }

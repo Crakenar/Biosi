@@ -7,6 +7,8 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
+import { ProgressBar } from '../../components/onboarding/ProgressBar';
+import { MotivationalLoader } from '../../components/onboarding/MotivationalLoader';
 import { useTranslation } from 'react-i18next';
 
 type LanguageSelectionNavigationProp = StackNavigationProp<
@@ -23,6 +25,7 @@ export const LanguageSelectionScreen: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'fr'>(
     i18n.language as 'en' | 'fr'
   );
+  const [showLoader, setShowLoader] = useState(false);
 
   const handleSelectLanguage = (language: 'en' | 'fr') => {
     setSelectedLanguage(language);
@@ -31,7 +34,11 @@ export const LanguageSelectionScreen: React.FC = () => {
   };
 
   const handleContinue = () => {
-    navigation.navigate('ProfileSetup');
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      navigation.navigate('ProfileSetup');
+    }, 1500);
   };
 
   const LanguageOption = ({
@@ -116,6 +123,7 @@ export const LanguageSelectionScreen: React.FC = () => {
       }}
     >
       <View>
+        <ProgressBar currentStep={2} totalSteps={5} />
         <Text
           style={{
             fontSize: theme.typography.sizes.xl,
@@ -141,6 +149,8 @@ export const LanguageSelectionScreen: React.FC = () => {
       </View>
 
       <Button title={t('common.next')} onPress={handleContinue} size="large" />
+
+      <MotivationalLoader visible={showLoader} />
     </View>
   );
 };

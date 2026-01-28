@@ -318,7 +318,7 @@ export const TransactionHistoryScreen: React.FC = () => {
                                         minimumFontScale={0.7}
                                     >
                                         {settings.displayMode === 'hours'
-                                            ? formatHours(item.hoursOfWork)
+                                            ? formatHours(item.hoursOfWork, settings.workHoursPerDay)
                                             : formatCurrency(item.itemPrice, user.currency)}
                                     </Text>
                                 </View>
@@ -342,7 +342,7 @@ export const TransactionHistoryScreen: React.FC = () => {
                                     >
                                         {settings.displayMode === 'hours'
                                             ? formatCurrency(item.itemPrice, user.currency)
-                                            : formatHours(item.hoursOfWork)}
+                                            : formatHours(item.hoursOfWork, settings.workHoursPerDay)}
                                     </Text>
                                 </View>
                             </View>

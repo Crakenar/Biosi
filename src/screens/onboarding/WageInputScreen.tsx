@@ -15,6 +15,8 @@ import { OnboardingStackParamList } from '../../navigation/types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
+import { ProgressBar } from '../../components/onboarding/ProgressBar';
+import { MotivationalLoader } from '../../components/onboarding/MotivationalLoader';
 import { APP_CONFIG } from '../../constants/config';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +25,7 @@ type WageInputRouteProp = RouteProp<OnboardingStackParamList, 'WageInput'>;
 
 interface WageForm {
   amount: string;
+  hoursPerWeek: string;
 }
 
 const PERIODS: Array<{ value: 'hourly' | 'monthly' | 'yearly'; label: string }> = [
@@ -36,6 +39,7 @@ export const WageInputScreen: React.FC = () => {
   const route = useRoute<WageInputRouteProp>();
   const { theme } = useTheme();
   const [selectedPeriod, setSelectedPeriod] = useState<'hourly' | 'monthly' | 'yearly'>('hourly');
+  const [showLoader, setShowLoader] = useState(false);
 
   const {
     control,
@@ -44,24 +48,35 @@ export const WageInputScreen: React.FC = () => {
   } = useForm<WageForm>({
     defaultValues: {
       amount: '',
+      hoursPerWeek: '40',
     },
   });
 
   const onSubmit = (data: WageForm) => {
     const amount = parseFloat(data.amount);
+    const hoursPerWeek = parseFloat(data.hoursPerWeek);
 
     if (amount < APP_CONFIG.VALIDATION.MIN_WAGE) {
       return;
     }
 
-    navigation.navigate('CurrencySelection', {
-      name: route.params.name,
-      age: route.params.age,
-      wage: {
-        amount,
-        period: selectedPeriod,
-      },
-    });
+    if (hoursPerWeek < 1 || hoursPerWeek > 168) {
+      return;
+    }
+
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      navigation.navigate('CurrencySelection', {
+        name: route.params.name,
+        age: route.params.age,
+        wage: {
+          amount,
+          period: selectedPeriod,
+        },
+        hoursPerWeek,
+      });
+    }, 1500);
   };
 
   return (
@@ -78,6 +93,7 @@ export const WageInputScreen: React.FC = () => {
         ]}
       >
         <View style={styles.content}>
+          <ProgressBar currentStep={4} totalSteps={5} />
           <Text
             style={{
               fontSize: theme.typography.sizes.xl,
@@ -164,9 +180,38 @@ export const WageInputScreen: React.FC = () => {
               </TouchableOpacity>
             ))}
           </View>
+
+          <Controller
+            control={control}
+            rules={{
+              required: 'Hours per week is required',
+              validate: (value) => {
+                const hours = parseFloat(value);
+                if (isNaN(hours)) return 'Hours must be a valid number';
+                if (hours < 1) return 'Hours must be at least 1';
+                if (hours > 168) return 'Hours cannot exceed 168 per week';
+                return true;
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Hours Per Week"
+                placeholder="Enter hours per week"
+                keyboardType="decimal-pad"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={errors.hoursPerWeek?.message}
+                containerStyle={{ marginTop: theme.spacing.lg }}
+              />
+            )}
+            name="hoursPerWeek"
+          />
         </View>
 
         <Button title="Next" onPress={handleSubmit(onSubmit)} size="large" />
+
+        <MotivationalLoader visible={showLoader} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

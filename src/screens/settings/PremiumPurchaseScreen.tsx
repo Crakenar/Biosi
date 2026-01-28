@@ -34,7 +34,8 @@ export const PremiumPurchaseScreen: React.FC = () => {
       const products = await iapService.getProducts();
       if (products.length > 0) {
         const product = products[0];
-        setProductPrice(product.localizedPrice);
+        // Use price and currency instead of localizedPrice
+        setProductPrice(product.price ? `${product.currency} ${product.price}` : 'Premium');
       }
     } catch (error) {
       console.error('Error loading products:', error);
