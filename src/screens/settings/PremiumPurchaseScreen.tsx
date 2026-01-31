@@ -1,277 +1,434 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { SettingsStackParamList } from '../../navigation/types';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useSettingsStore } from '../../store/settingsStore';
-import { Button } from '../../components/common/Button';
-import { Card } from '../../components/common/Card';
-import { useTranslation } from 'react-i18next';
+import { useUserStore } from '../../store/userStore';
+import RevenueCatService from '../../services/revenuecat';
+import type { PurchasesPackage } from 'react-native-purchases';
+import { Modal } from '../../components/common/Modal';
 
-type PremiumPurchaseNavigationProp = StackNavigationProp<
-  SettingsStackParamList,
-  'PremiumPurchase'
->;
-
-export const PremiumPurchaseScreen: React.FC = () => {
-  const navigation = useNavigation<PremiumPurchaseNavigationProp>();
-  const { theme } = useTheme();
+export function PremiumPurchaseScreen() {
   const { t } = useTranslation();
-  const { unlockPremium, setTheme } = useSettingsStore();
-
-  const [loading, setLoading] = useState(false);
-  const [productPrice, setProductPrice] = useState('€1.00');
+  const { theme } = useTheme();
+  const navigation = useNavigation();
+  const { settings, setPremium } = useSettingsStore();
+  const { user } = useUserStore();
+  const [loading, setLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [monthlyPackage, setMonthlyPackage] = useState<PurchasesPackage | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successTitle, setSuccessTitle] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
-    try {
-      const products: string | any[] = [];
-      if (products.length > 0) {
-        const product = products[0];
-        // Use price and currency instead of localizedPrice
-        setProductPrice(product.price ? `${product.currency} ${product.price}` : 'Premium');
-      }
-    } catch (error) {
-      console.error('Error loading products:', error);
-    }
+  const getCurrencySymbol = (currency: string) => {
+    const symbols: { [key: string]: string } = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      JPY: '¥',
+      CAD: 'CA$',
+      AUD: 'A$',
+      CHF: 'CHF',
+    };
+    return symbols[currency] || currency;
   };
 
-  const handlePurchase = async () => {
-    setLoading(true);
+  const formatPrice = (currency: string) => {
+    const symbol = getCurrencySymbol(currency);
+    return `${symbol}0.99`;
+  };
+
+  useEffect(() => {
+    loadOfferings();
+  }, []);
+
+  const loadOfferings = async () => {
     try {
-      const success = true;
+      setLoading(true);
+      const offering = await RevenueCatService.getOfferings();
 
-      if (success) {
-        // Unlock premium and switch to financial theme
-        unlockPremium();
-        setTheme('financial');
-
-        Alert.alert(
-          t('premium.purchaseSuccessTitle'),
-          t('premium.purchaseSuccessMessage'),
-          [
-            {
-              text: t('common.done'),
-              onPress: () => navigation.goBack(),
-            },
-          ]
+      if (offering?.availablePackages) {
+        // Find monthly package
+        const monthly = offering.availablePackages.find(
+          (pkg) => pkg.identifier === '$rc_monthly' || pkg.packageType === 'MONTHLY'
         );
+        setMonthlyPackage(monthly || offering.availablePackages[0] || null);
       }
-    } catch (error: any) {
-      Alert.alert(
-        t('premium.purchaseErrorTitle'),
-        error.message || t('premium.purchaseErrorMessage')
-      );
+    } catch (error) {
+      console.error('Failed to load offerings:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRestore = async () => {
-    setRestoring(true);
+  const handlePurchase = async () => {
+    if (!monthlyPackage) {
+      setErrorMessage('No subscription package available. Please try again later.');
+      setShowErrorModal(true);
+      return;
+    }
+
     try {
-      const hasPremium = true;
+      setPurchasing(true);
+      const { customerInfo, error } = await RevenueCatService.purchasePackage(monthlyPackage);
 
-      if (hasPremium) {
-        unlockPremium();
-        setTheme('financial');
+      if (error) {
+        if (error !== 'Purchase cancelled') {
+          setErrorMessage(error);
+          setShowErrorModal(true);
+        }
+        return;
+      }
 
-        Alert.alert(
-          t('premium.restoreSuccessTitle'),
-          t('premium.restoreSuccessMessage'),
-          [
-            {
-              text: t('common.done'),
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
-      } else {
-        Alert.alert(
-          t('premium.restoreNotFoundTitle'),
-          t('premium.restoreNotFoundMessage')
-        );
+      if (customerInfo && RevenueCatService.isPremium(customerInfo)) {
+        setPremium(true);
+        setSuccessTitle(t('premium.success'));
+        setSuccessMessage(t('premium.successMessage'));
+        setShowSuccessModal(true);
       }
     } catch (error: any) {
-      Alert.alert(
-        t('premium.restoreErrorTitle'),
-        error.message || t('premium.restoreErrorMessage')
-      );
+      setErrorMessage(error.message || 'Something went wrong');
+      setShowErrorModal(true);
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    try {
+      setRestoring(true);
+      const { customerInfo, error } = await RevenueCatService.restorePurchases();
+
+      if (error) {
+        setErrorMessage(error);
+        setShowErrorModal(true);
+        return;
+      }
+
+      if (customerInfo && RevenueCatService.isPremium(customerInfo)) {
+        setPremium(true);
+        setSuccessTitle(t('premium.restored'));
+        setSuccessMessage(t('premium.restoredMessage'));
+        setShowRestoreModal(true);
+      } else {
+        setErrorMessage('No active subscriptions found to restore.');
+        setShowErrorModal(true);
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message || 'Failed to restore purchases');
+      setShowErrorModal(true);
     } finally {
       setRestoring(false);
     }
   };
 
-  return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={{ padding: theme.spacing.xl }}>
-        {/* Header */}
-        <View style={{ alignItems: 'center', marginBottom: theme.spacing.xl }}>
-          <View
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: theme.borderRadius.round,
-              backgroundColor: '#C9A961',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: theme.spacing.md,
-            }}
-          >
-            <Text style={{ fontSize: 50 }}>💎</Text>
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    setShowRestoreModal(false);
+    navigation.goBack();
+  };
+
+  if (settings.isPremium) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.text }]}>
+              ✨ {t('premium.alreadyPremium')}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+              {t('premium.thankYou')}
+            </Text>
           </View>
-          <Text
-            style={{
-              fontSize: theme.typography.sizes.xxl,
-              fontWeight: 'bold',
-              color: theme.colors.text,
-              marginBottom: theme.spacing.xs,
-              textAlign: 'center',
-            }}
-          >
+
+          <View style={styles.featuresContainer}>
+            {renderFeaturesList()}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  const renderFeaturesList = () => {
+    const features = [
+      { icon: '🎨', title: t('premium.features.financialTheme'), description: t('premium.features.financialThemeDesc') },
+      { icon: '📊', title: t('premium.features.categoryBreakdown'), description: t('premium.features.categoryBreakdownDesc') },
+      { icon: '📅', title: t('premium.features.weeklyInsights'), description: t('premium.features.weeklyInsightsDesc') },
+      { icon: '📈', title: t('premium.features.customDateRange'), description: t('premium.features.customDateRangeDesc') },
+      { icon: '🔄', title: t('premium.features.yearOverYear'), description: t('premium.features.yearOverYearDesc') },
+      { icon: '💹', title: t('premium.features.customInterest'), description: t('premium.features.customInterestDesc') },
+      { icon: '🎯', title: t('premium.features.savingsGoals'), description: t('premium.features.savingsGoalsDesc') },
+      { icon: '⚠️', title: t('premium.features.budgetAlerts'), description: t('premium.features.budgetAlertsDesc') },
+      { icon: '🏷️', title: t('premium.features.categoriesAndTags'), description: t('premium.features.categoriesAndTagsDesc') },
+      { icon: '📝', title: t('premium.features.notesAndPhotos'), description: t('premium.features.notesAndPhotosDesc') },
+      { icon: '📤', title: t('premium.features.exportData'), description: t('premium.features.exportDataDesc') },
+      { icon: '♾️', title: t('premium.features.unlimitedHistory'), description: t('premium.features.unlimitedHistoryDesc') },
+    ];
+
+    return features.map((feature, index) => (
+      <View
+        key={index}
+        style={[
+          styles.featureItem,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.border,
+          },
+        ]}
+      >
+        <Text style={styles.featureIcon}>{feature.icon}</Text>
+        <View style={styles.featureText}>
+          <Text style={[styles.featureTitle, { color: theme.colors.text }]}>
+            {feature.title}
+          </Text>
+          <Text style={[styles.featureDescription, { color: theme.colors.textSecondary }]}>
+            {feature.description}
+          </Text>
+        </View>
+      </View>
+    ));
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.emoji}>✨</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
             {t('premium.title')}
           </Text>
-          <Text
-            style={{
-              fontSize: theme.typography.sizes.md,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-            }}
-          >
+          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
             {t('premium.subtitle')}
           </Text>
         </View>
 
-        {/* Features */}
-        <Card variant="elevated" style={{ marginBottom: theme.spacing.lg }}>
-          <Text
-            style={{
-              fontSize: theme.typography.sizes.lg,
-              fontWeight: 'bold',
-              color: theme.colors.text,
-              marginBottom: theme.spacing.md,
-            }}
-          >
-            {t('premium.features')}
-          </Text>
+        <View style={styles.featuresContainer}>
+          {renderFeaturesList()}
+        </View>
 
-          {[
-            { icon: '🌙', text: t('premium.feature1') },
-            { icon: '💼', text: t('premium.feature2') },
-            { icon: '✨', text: t('premium.feature3') },
-            { icon: '🎨', text: t('premium.feature4') },
-          ].map((feature, index) => (
-            <View
-              key={index}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: theme.spacing.md,
-              }}
-            >
-              <Text style={{ fontSize: 24, marginRight: theme.spacing.sm }}>
-                {feature.icon}
-              </Text>
-              <Text
-                style={{
-                  fontSize: theme.typography.sizes.md,
-                  color: theme.colors.text,
-                  flex: 1,
-                }}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </View>
+        ) : (
+          <View style={styles.purchaseContainer}>
+            <>
+              <View
+                style={[
+                  styles.priceCard,
+                  {
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.primary,
+                  },
+                ]}
               >
-                {feature.text}
-              </Text>
-            </View>
-          ))}
-        </Card>
+                <Text style={[styles.priceLabel, { color: theme.colors.textSecondary }]}>
+                  {t('premium.title')}
+                </Text>
+                <Text style={[styles.priceAmount, { color: theme.colors.primary }]}>
+                  {user ? formatPrice(user.currency) : '€0.99'}
+                </Text>
+                <Text style={[styles.priceDescription, { color: theme.colors.textSecondary }]}>
+                  {t('premium.perMonth')}
+                </Text>
+              </View>
 
-        {/* Price */}
-        <Card variant="elevated" style={{ marginBottom: theme.spacing.lg }}>
-          <View style={{ alignItems: 'center' }}>
-            <Text
-              style={{
-                fontSize: theme.typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                marginBottom: theme.spacing.xs,
-              }}
+              <TouchableOpacity
+                style={[
+                  styles.purchaseButton,
+                  { backgroundColor: theme.colors.primary },
+                  (purchasing || !monthlyPackage) && styles.purchaseButtonDisabled,
+                ]}
+                onPress={handlePurchase}
+                disabled={purchasing || !monthlyPackage}
+              >
+                {purchasing ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.purchaseButtonText}>
+                    {t('premium.subscribe')}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </>
+
+            <TouchableOpacity
+              style={styles.restoreButton}
+              onPress={handleRestore}
+              disabled={restoring}
             >
-              {t('premium.oneTimePayment')}
-            </Text>
-            <Text
-              style={{
-                fontSize: theme.typography.sizes.xxl,
-                fontWeight: 'bold',
-                color: '#C9A961',
-                marginBottom: theme.spacing.xs,
-              }}
-            >
-              {productPrice}
-            </Text>
-            <Text
-              style={{
-                fontSize: theme.typography.sizes.xs,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              {t('premium.paymentMethods')}
+              {restoring ? (
+                <ActivityIndicator color={theme.colors.primary} />
+              ) : (
+                <Text style={[styles.restoreButtonText, { color: theme.colors.primary }]}>
+                  {t('premium.restore')}
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <Text style={[styles.disclaimer, { color: theme.colors.textSecondary }]}>
+              {t('premium.disclaimer')}
             </Text>
           </View>
-        </Card>
-
-        {/* Purchase Button */}
-        <Button
-          title={loading ? t('common.loading') : t('premium.unlockNow')}
-          onPress={handlePurchase}
-          size="large"
-          disabled={loading || restoring}
-          style={{ marginBottom: theme.spacing.md }}
-        />
-
-        {loading && (
-          <ActivityIndicator
-            size="small"
-            color={theme.colors.primary}
-            style={{ marginBottom: theme.spacing.md }}
-          />
         )}
+      </ScrollView>
 
-        {/* Restore Button */}
-        <Button
-          title={restoring ? t('common.loading') : t('premium.restorePurchase')}
-          onPress={handleRestore}
-          variant="outline"
-          size="medium"
-          disabled={loading || restoring}
-          style={{ marginBottom: theme.spacing.md }}
-        />
+      {/* Success Modal */}
+      <Modal
+        visible={showSuccessModal || showRestoreModal}
+        onClose={handleModalClose}
+        title={successTitle}
+        message={successMessage}
+        icon="🎉"
+        iconColor={theme.colors.primary}
+        actions={[
+          {
+            label: 'OK',
+            onPress: handleModalClose,
+            variant: 'primary',
+          },
+        ]}
+        dismissable={false}
+      />
 
-        {/* Back Button */}
-        <Button
-          title={t('common.cancel')}
-          onPress={() => navigation.goBack()}
-          variant="outline"
-          size="medium"
-        />
-
-        {/* Fine Print */}
-        <Text
-          style={{
-            fontSize: theme.typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginTop: theme.spacing.lg,
-          }}
-        >
-          {t('premium.finePrint')}
-        </Text>
-      </View>
-    </ScrollView>
+      {/* Error Modal */}
+      <Modal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title={t('premium.error')}
+        message={errorMessage}
+        icon="⚠️"
+        iconColor={theme.colors.error}
+        actions={[
+          {
+            label: 'OK',
+            onPress: () => setShowErrorModal(false),
+            variant: 'outline',
+          },
+        ]}
+      />
+    </View>
   );
-};
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  emoji: {
+    fontSize: 60,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  featuresContainer: {
+    marginBottom: 30,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+  },
+  featureIcon: {
+    fontSize: 24,
+    marginRight: 15,
+  },
+  featureText: {
+    flex: 1,
+  },
+  featureTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  featureDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  purchaseContainer: {
+    marginTop: 10,
+  },
+  priceCard: {
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 2,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  priceLabel: {
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  priceAmount: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  priceDescription: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  purchaseButton: {
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  purchaseButtonDisabled: {
+    opacity: 0.6,
+  },
+  purchaseButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  restoreButton: {
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  restoreButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  disclaimer: {
+    fontSize: 12,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+});

@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Modal } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
-
-const MOTIVATIONAL_MESSAGES = [
-  'This app helps more than 1,000 people save over €200 per month',
-  'Users save an average of 15% of their income',
-  'Join thousands making smarter financial decisions',
-  'Track your spending in work hours, not just money',
-  'See the true cost of every purchase',
-  'Make every work hour count',
-  'Your financial awareness journey starts now',
-  'Small changes lead to big savings',
-];
+import { useTranslation } from 'react-i18next';
 
 interface MotivationalLoaderProps {
   visible: boolean;
@@ -23,7 +13,19 @@ export const MotivationalLoader: React.FC<MotivationalLoaderProps> = ({
   message,
 }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [currentMessage, setCurrentMessage] = useState('');
+
+  const MOTIVATIONAL_MESSAGES = [
+    t('onboarding.motivation.message1'),
+    t('onboarding.motivation.message2'),
+    t('onboarding.motivation.message3'),
+    t('onboarding.motivation.message4'),
+    t('onboarding.motivation.message5'),
+    t('onboarding.motivation.message6'),
+    t('onboarding.motivation.message7'),
+    t('onboarding.motivation.message8'),
+  ];
 
   useEffect(() => {
     if (visible) {

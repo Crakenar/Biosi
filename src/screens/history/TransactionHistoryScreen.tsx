@@ -21,6 +21,7 @@ import {formatHours} from '../../services/calculations';
 import {formatDateTime} from '../../utils/dateHelpers';
 import {aggregateTransactions} from '../../utils/aggregations';
 import {useTranslation} from 'react-i18next';
+import {subMonths, isAfter} from 'date-fns';
 
 type HistoryNavigationProp = StackNavigationProp<HistoryStackParamList, 'TransactionHistory'>;
 
@@ -41,6 +42,12 @@ export const TransactionHistoryScreen: React.FC = () => {
     const filteredTransactions = useMemo(() => {
         let result = [...transactions];
 
+        // Apply 3-month limit for free users
+        if (!settings.isPremium) {
+            const threeMonthsAgo = subMonths(new Date(), 3);
+            result = result.filter((t) => isAfter(new Date(t.timestamp), threeMonthsAgo));
+        }
+
         if (filter !== 'all') {
             result = result.filter((t) => t.type === filter);
         }
@@ -55,7 +62,7 @@ export const TransactionHistoryScreen: React.FC = () => {
         }
 
         return result.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    }, [transactions, filter, searchQuery]);
+    }, [transactions, filter, searchQuery, settings.isPremium]);
 
     const stats = useMemo(() => aggregateTransactions(filteredTransactions), [filteredTransactions]);
 
@@ -113,6 +120,30 @@ export const TransactionHistoryScreen: React.FC = () => {
                 >
                     {t('history.title')}
                 </Text>
+
+                {/* Premium Limit Banner */}
+                {!settings.isPremium && (
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: theme.colors.primary,
+                            padding: theme.spacing.md,
+                            borderRadius: theme.borderRadius.md,
+                            marginBottom: theme.spacing.md,
+                        }}
+                        onPress={() => navigation.navigate('SettingsTab', {
+                            screen: 'PremiumPurchase'
+                        } as any)}
+                    >
+                        <Text style={{
+                            color: '#fff',
+                            fontSize: theme.typography.sizes.sm,
+                            fontWeight: '600',
+                            textAlign: 'center'
+                        }}>
+                            ✨ Showing last 3 months • Upgrade to Premium for unlimited history
+                        </Text>
+                    </TouchableOpacity>
+                )}
 
                 {/* Summary Stats */}
                 <Card variant="elevated"

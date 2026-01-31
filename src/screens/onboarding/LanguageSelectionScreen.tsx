@@ -37,7 +37,7 @@ export const LanguageSelectionScreen: React.FC = () => {
     setShowLoader(true);
     setTimeout(() => {
       setShowLoader(false);
-      navigation.navigate('ProfileSetup');
+      navigation.navigate('NameInput');
     }, 1500);
   };
 

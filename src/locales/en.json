@@ -5,11 +5,13 @@
     "cancel": "Cancel",
     "done": "Done",
     "next": "Next",
+    "skip": "Skip",
     "goBack": "Go Back",
     "delete": "Delete",
     "search": "Search",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "gotIt": "Got it"
   },
   "onboarding": {
     "welcome": {
@@ -17,6 +19,24 @@
       "subtitle": "Make Mindful Purchase Decisions",
       "description": "See how many hours you need to work for each purchase. Track your spending and savings over time.",
       "getStarted": "Get Started"
+    },
+    "motivation": {
+      "message1": "This app helps more than 1,000 people save over €200 per month",
+      "message2": "Users save an average of 15% of their income",
+      "message3": "Join thousands making smarter financial decisions",
+      "message4": "Track your spending in work hours, not just money",
+      "message5": "See the true cost of every purchase",
+      "message6": "Make every work hour count",
+      "message7": "Your financial awareness journey starts now",
+      "message8": "Small changes lead to big savings"
+    },
+    "name": {
+      "title": "What's your name?",
+      "description": "We'll use this to personalize your experience."
+    },
+    "age": {
+      "title": "How old are you?",
+      "description": "This helps us provide age-appropriate financial insights."
     },
     "profile": {
       "title": "Let's get to know you",
@@ -192,27 +212,71 @@
   "premium": {
     "premium": "Premium",
     "unlocked": "Unlocked",
-    "title": "Unlock Premium Theme",
-    "subtitle": "Elevate your financial tracking experience",
-    "features": "What's Included",
-    "feature1": "Elegant dark theme with gold accents",
-    "feature2": "Professional banking-style interface",
-    "feature3": "Enhanced visual hierarchy for better focus",
-    "feature4": "One-time purchase, yours forever",
-    "oneTimePayment": "One-time payment",
-    "paymentMethods": "Apple Pay & Google Pay accepted",
-    "unlockNow": "Unlock Premium Theme",
-    "restorePurchase": "Restore Purchase",
-    "finePrint": "Your purchase is tied to your Apple ID or Google account. Restore on any device by tapping 'Restore Purchase'.",
-    "purchaseSuccessTitle": "Welcome to Premium!",
-    "purchaseSuccessMessage": "The Financial Theme has been unlocked. Enjoy your premium experience!",
-    "purchaseErrorTitle": "Purchase Failed",
-    "purchaseErrorMessage": "There was an error processing your purchase. Please try again.",
-    "restoreSuccessTitle": "Purchase Restored",
-    "restoreSuccessMessage": "Your premium theme has been restored successfully!",
-    "restoreNotFoundTitle": "No Purchase Found",
-    "restoreNotFoundMessage": "We couldn't find any previous purchases. If you believe this is an error, please contact support.",
-    "restoreErrorTitle": "Restore Failed",
-    "restoreErrorMessage": "There was an error restoring your purchase. Please try again."
+    "title": "Unlock Premium Features",
+    "subtitle": "Get advanced analytics and unlimited insights for just €1/month",
+    "alreadyPremium": "You're a Premium Member!",
+    "thankYou": "Thank you for supporting Time Worth. Enjoy all premium features!",
+    "perMonth": "per month",
+    "continueWithFree": "Continue with free version",
+    "subscribe": "Subscribe Now",
+    "restore": "Restore Purchase",
+    "success": "Success!",
+    "successMessage": "Premium features unlocked! Enjoy your enhanced experience.",
+    "restored": "Restored!",
+    "restoredMessage": "Your premium subscription has been restored successfully.",
+    "noRestorableFound": "No Purchase Found",
+    "error": "Error",
+    "disclaimer": "Cancel anytime. Subscription renews automatically. Privacy policy and terms available in app.",
+    "features": {
+      "financialTheme": "Financial Theme",
+      "financialThemeDesc": "Elegant dark theme with gold accents for professional tracking",
+      "categoryBreakdown": "Category Breakdown",
+      "categoryBreakdownDesc": "Visualize spending by category with interactive pie charts",
+      "weeklyInsights": "Weekly & Daily Insights",
+      "weeklyInsightsDesc": "Analyze spending patterns by day of week and daily trends",
+      "customDateRange": "Custom Date Ranges",
+      "customDateRangeDesc": "Compare any time periods and generate custom reports",
+      "yearOverYear": "Year-over-Year Comparison",
+      "yearOverYearDesc": "Track your financial progress across multiple years",
+      "customInterest": "Custom Interest Rate",
+      "customInterestDesc": "Adjust compound interest projections to match your investments",
+      "savingsGoals": "Savings Goals",
+      "savingsGoalsDesc": "Set and track specific savings targets with visual progress",
+      "budgetAlerts": "Budget Alerts",
+      "budgetAlertsDesc": "Get notified when approaching your spending limits",
+      "categoriesAndTags": "Categories & Tags",
+      "categoriesAndTagsDesc": "Organize transactions with custom categories and tags",
+      "notesAndPhotos": "Notes & Photos",
+      "notesAndPhotosDesc": "Attach receipts and add detailed notes to transactions",
+      "exportData": "Export Data",
+      "exportDataDesc": "Download your financial data as CSV or PDF reports",
+      "unlimitedHistory": "Unlimited History",
+      "unlimitedHistoryDesc": "Access all your transactions, not just the last 3 months"
+    },
+    "upgradePrompt": "Upgrade to Premium",
+    "upgradeMessage": "This feature is available with Premium. Unlock all advanced analytics and unlimited insights for just €1/month.",
+    "freeTrialMessage": "Try Premium free for 7 days, then €1/month",
+    "limitReached": "Free Limit Reached",
+    "historyLimitMessage": "Free users can view the last 3 months of history. Upgrade to Premium for unlimited access to all your transactions."
+  },
+  "budget": {
+    "alert": {
+      "title": "Budget Alert",
+      "reached": "You've reached {{percentage}}% of your {{period}}'s budget.\n\n{{spent}} / {{budget}}",
+      "exceeded": "Budget Exceeded!\n\nYou've spent {{percentage}}% of your {{period}}'s budget.\n\n{{spent}} / {{budget}}"
+    },
+    "period": {
+      "today": "today",
+      "this week": "this week",
+      "this month": "this month"
+    }
+  },
+  "goals": {
+    "alert": {
+      "completed": "Goal Completed!",
+      "progress": "Goal Progress",
+      "completedMessage": "{{icon}} Congratulations!\n\nYou've reached your goal: {{name}}\n\nTarget: {{amount}}",
+      "progressMessage": "{{icon}} Great progress on {{name}}!\n\nYou're at {{percentage}}% of your goal.\n\n{{current}} / {{target}}"
+    }
   }
 }

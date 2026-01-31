@@ -5,11 +5,13 @@
     "cancel": "Annuler",
     "done": "Terminé",
     "next": "Suivant",
+    "skip": "Passer",
     "goBack": "Retour",
     "delete": "Supprimer",
     "search": "Rechercher",
     "edit": "Modifier",
-    "close": "Fermer"
+    "close": "Fermer",
+    "gotIt": "Compris"
   },
   "onboarding": {
     "welcome": {
@@ -17,6 +19,24 @@
       "subtitle": "Prenez des décisions d'achat réfléchies",
       "description": "Voyez combien d'heures vous devez travailler pour chaque achat. Suivez vos dépenses et vos économies au fil du temps.",
       "getStarted": "Commencer"
+    },
+    "motivation": {
+      "message1": "Cette app aide plus de 1 000 personnes à économiser plus de 200€ par mois",
+      "message2": "Les utilisateurs économisent en moyenne 15% de leurs revenus",
+      "message3": "Rejoignez des milliers de personnes qui prennent des décisions financières plus intelligentes",
+      "message4": "Suivez vos dépenses en heures de travail, pas seulement en argent",
+      "message5": "Voyez le vrai coût de chaque achat",
+      "message6": "Faites compter chaque heure de travail",
+      "message7": "Votre parcours de conscience financière commence maintenant",
+      "message8": "Les petits changements mènent à de grandes économies"
+    },
+    "name": {
+      "title": "Quel est votre nom ?",
+      "description": "Nous l'utiliserons pour personnaliser votre expérience."
+    },
+    "age": {
+      "title": "Quel âge avez-vous ?",
+      "description": "Cela nous aide à fournir des informations financières adaptées à votre âge."
     },
     "profile": {
       "title": "Faisons connaissance",
@@ -192,27 +212,71 @@
   "premium": {
     "premium": "Premium",
     "unlocked": "Débloqué",
-    "title": "Débloquer le thème Premium",
-    "subtitle": "Améliorez votre expérience de suivi financier",
-    "features": "Ce qui est inclus",
-    "feature1": "Thème sombre élégant avec accents dorés",
-    "feature2": "Interface professionnelle style bancaire",
-    "feature3": "Hiérarchie visuelle améliorée pour une meilleure concentration",
-    "feature4": "Achat unique, à vous pour toujours",
-    "oneTimePayment": "Paiement unique",
-    "paymentMethods": "Apple Pay et Google Pay acceptés",
-    "unlockNow": "Débloquer le thème Premium",
-    "restorePurchase": "Restaurer l'achat",
-    "finePrint": "Votre achat est lié à votre identifiant Apple ou compte Google. Restaurez sur n'importe quel appareil en appuyant sur 'Restaurer l'achat'.",
-    "purchaseSuccessTitle": "Bienvenue dans Premium !",
-    "purchaseSuccessMessage": "Le thème financier a été débloqué. Profitez de votre expérience premium !",
-    "purchaseErrorTitle": "Échec de l'achat",
-    "purchaseErrorMessage": "Une erreur s'est produite lors du traitement de votre achat. Veuillez réessayer.",
-    "restoreSuccessTitle": "Achat restauré",
-    "restoreSuccessMessage": "Votre thème premium a été restauré avec succès !",
-    "restoreNotFoundTitle": "Aucun achat trouvé",
-    "restoreNotFoundMessage": "Nous n'avons trouvé aucun achat précédent. Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support.",
-    "restoreErrorTitle": "Échec de la restauration",
-    "restoreErrorMessage": "Une erreur s'est produite lors de la restauration de votre achat. Veuillez réessayer."
+    "title": "Débloquer les fonctionnalités Premium",
+    "subtitle": "Obtenez des analyses avancées et des insights illimités pour seulement 1€/mois",
+    "alreadyPremium": "Vous êtes membre Premium !",
+    "thankYou": "Merci de soutenir Time Worth. Profitez de toutes les fonctionnalités premium !",
+    "perMonth": "par mois",
+    "continueWithFree": "Continuer avec la version gratuite",
+    "subscribe": "S'abonner maintenant",
+    "restore": "Restaurer l'achat",
+    "success": "Succès !",
+    "successMessage": "Fonctionnalités premium débloquées ! Profitez de votre expérience améliorée.",
+    "restored": "Restauré !",
+    "restoredMessage": "Votre abonnement premium a été restauré avec succès.",
+    "noRestorableFound": "Aucun achat trouvé",
+    "error": "Erreur",
+    "disclaimer": "Annulez à tout moment. L'abonnement se renouvelle automatiquement. Politique de confidentialité et conditions disponibles dans l'app.",
+    "features": {
+      "financialTheme": "Thème Financier",
+      "financialThemeDesc": "Thème sombre élégant avec accents dorés pour un suivi professionnel",
+      "categoryBreakdown": "Répartition par catégorie",
+      "categoryBreakdownDesc": "Visualisez les dépenses par catégorie avec des graphiques circulaires interactifs",
+      "weeklyInsights": "Insights hebdomadaires et quotidiens",
+      "weeklyInsightsDesc": "Analysez les habitudes de dépenses par jour de la semaine et tendances quotidiennes",
+      "customDateRange": "Plages de dates personnalisées",
+      "customDateRangeDesc": "Comparez n'importe quelles périodes et générez des rapports personnalisés",
+      "yearOverYear": "Comparaison d'une année à l'autre",
+      "yearOverYearDesc": "Suivez vos progrès financiers sur plusieurs années",
+      "customInterest": "Taux d'intérêt personnalisé",
+      "customInterestDesc": "Ajustez les projections d'intérêts composés pour correspondre à vos investissements",
+      "savingsGoals": "Objectifs d'épargne",
+      "savingsGoalsDesc": "Définissez et suivez des objectifs d'épargne spécifiques avec progression visuelle",
+      "budgetAlerts": "Alertes budgétaires",
+      "budgetAlertsDesc": "Recevez une notification lorsque vous approchez de vos limites de dépenses",
+      "categoriesAndTags": "Catégories et tags",
+      "categoriesAndTagsDesc": "Organisez les transactions avec des catégories et des tags personnalisés",
+      "notesAndPhotos": "Notes et photos",
+      "notesAndPhotosDesc": "Joignez des reçus et ajoutez des notes détaillées aux transactions",
+      "exportData": "Exporter les données",
+      "exportDataDesc": "Téléchargez vos données financières au format CSV ou PDF",
+      "unlimitedHistory": "Historique illimité",
+      "unlimitedHistoryDesc": "Accédez à toutes vos transactions, pas seulement aux 3 derniers mois"
+    },
+    "upgradePrompt": "Passer à Premium",
+    "upgradeMessage": "Cette fonctionnalité est disponible avec Premium. Débloquez toutes les analyses avancées et les insights illimités pour seulement 1€/mois.",
+    "freeTrialMessage": "Essayez Premium gratuitement pendant 7 jours, puis 1€/mois",
+    "limitReached": "Limite gratuite atteinte",
+    "historyLimitMessage": "Les utilisateurs gratuits peuvent voir les 3 derniers mois d'historique. Passez à Premium pour un accès illimité à toutes vos transactions."
+  },
+  "budget": {
+    "alert": {
+      "title": "Alerte Budget",
+      "reached": "Vous avez atteint {{percentage}}% de votre budget {{period}}.\n\n{{spent}} / {{budget}}",
+      "exceeded": "Budget Dépassé !\n\nVous avez dépensé {{percentage}}% de votre budget {{period}}.\n\n{{spent}} / {{budget}}"
+    },
+    "period": {
+      "today": "d'aujourd'hui",
+      "this week": "de cette semaine",
+      "this month": "de ce mois"
+    }
+  },
+  "goals": {
+    "alert": {
+      "completed": "Objectif Atteint !",
+      "progress": "Progression de l'Objectif",
+      "completedMessage": "{{icon}} Félicitations !\n\nVous avez atteint votre objectif : {{name}}\n\nCible : {{amount}}",
+      "progressMessage": "{{icon}} Excellent progrès sur {{name}} !\n\nVous êtes à {{percentage}}% de votre objectif.\n\n{{current}} / {{target}}"
+    }
   }
 }

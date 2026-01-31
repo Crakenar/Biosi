@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 export const CompoundInterestChart: React.FC = () => {
   const { theme } = useTheme();
   const { user } = useUserStore();
-  const { tenYear, twentyYear, principal } = useCompoundInterest();
+  const { tenYear, twentyYear, principal, rate } = useCompoundInterest();
   const { t } = useTranslation();
 
   if (!user) return null;
@@ -28,7 +28,7 @@ export const CompoundInterestChart: React.FC = () => {
           marginBottom: theme.spacing.lg,
         }}
       >
-        {t('dashboard.compoundInterest')}
+        Compound Interest ({(rate * 100).toFixed(1)}%)
       </Text>
 
       {principal === 0 ? (

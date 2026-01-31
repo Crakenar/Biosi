@@ -5,9 +5,13 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 export type OnboardingStackParamList = {
   Welcome: undefined;
   LanguageSelection: undefined;
-  ProfileSetup: undefined;
-  WageInput: { name: string; age: number };
-  CurrencySelection: { name: string; age: number; wage: { amount: number; period: 'hourly' | 'monthly' | 'yearly' }; hoursPerWeek: number };
+  NameInput: undefined;
+  AgeInput: { name: string };
+  CurrencySelection: { name: string; age: number };
+  WageInput: { name: string; age: number; currency: string };
+  PremiumUpsell: undefined;
+  // Deprecated - keeping for backwards compatibility
+  ProfileSetup?: undefined;
 };
 
 export type DashboardStackParamList = {
@@ -29,11 +33,19 @@ export type SettingsStackParamList = {
   LanguageSettings: undefined;
   PremiumPurchase: undefined;
   WorkHoursSettings: undefined;
+  CompoundInterestSettings: undefined;
+  DevSettings: undefined;
+  PremiumAnalytics: undefined;
+  Budget: undefined;
+  Goals: undefined;
 };
 
 export type AppTabParamList = {
   DashboardTab: NavigatorScreenParams<DashboardStackParamList>;
   HistoryTab: NavigatorScreenParams<HistoryStackParamList>;
+  AnalyticsTab: undefined;
+  BudgetTab: undefined;
+  GoalsTab: undefined;
   SettingsTab: NavigatorScreenParams<SettingsStackParamList>;
 };
 

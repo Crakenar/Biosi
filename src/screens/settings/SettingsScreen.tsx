@@ -9,6 +9,7 @@ import { useSettingsStore } from '../../store/settingsStore';
 import { Card } from '../../components/common/Card';
 import { formatCurrency } from '../../utils/formatters';
 import { useTranslation } from 'react-i18next';
+import { DevTools } from '../../services/devTools';
 
 type SettingsNavigationProp = StackNavigationProp<SettingsStackParamList, 'SettingsMain'>;
 
@@ -88,6 +89,82 @@ export const SettingsScreen: React.FC = () => {
         >
           {t('settings.title')}
         </Text>
+
+        {/* Premium Section */}
+        {!settings.isPremium && (
+          <>
+            <TouchableOpacity
+              style={{
+                backgroundColor: theme.colors.primary,
+                borderRadius: theme.borderRadius.lg,
+                padding: theme.spacing.lg,
+                marginBottom: theme.spacing.xl,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onPress={() => navigation.navigate('PremiumPurchase')}
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{
+                    fontSize: theme.typography.sizes.lg,
+                    fontWeight: 'bold',
+                    color: '#fff',
+                    marginBottom: 4,
+                  }}
+                >
+                  ✨ {t('premium.title')}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: theme.typography.sizes.sm,
+                    color: '#fff',
+                    opacity: 0.9,
+                  }}
+                >
+                  {t('premium.subtitle')}
+                </Text>
+              </View>
+              <Text style={{ fontSize: 24, color: '#fff' }}>›</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {/* Premium Features Section - Only show if premium */}
+        {settings.isPremium && (
+          <>
+            <Text
+              style={{
+                fontSize: theme.typography.sizes.sm,
+                fontWeight: '600',
+                color: theme.colors.textSecondary,
+                marginBottom: theme.spacing.md,
+              }}
+            >
+              ✨ Premium Features
+            </Text>
+            <Card variant="elevated" style={{ marginBottom: theme.spacing.xl }}>
+              <View style={{ paddingVertical: theme.spacing.sm }}>
+                <SettingItem
+                  label="📊 Analytics"
+                  value="View insights"
+                  onPress={() => navigation.navigate('PremiumAnalytics')}
+                />
+                <SettingItem
+                  label="💰 Budgets"
+                  value="Set limits"
+                  onPress={() => navigation.navigate('Budget')}
+                />
+                <SettingItem
+                  label="🎯 Goals"
+                  value="Track progress"
+                  onPress={() => navigation.navigate('Goals')}
+                />
+              </View>
+            </Card>
+          </>
+        )}
 
         {/* Profile Section */}
         <Text
@@ -204,11 +281,39 @@ export const SettingsScreen: React.FC = () => {
             <SettingItem label={t('settings.version')} value="1.0.0" icon="ℹ️" />
             <SettingItem
               label={t('settings.compoundInterestRate')}
-              value="7%"
+              value={`${(settings.compoundInterestRate * 100).toFixed(1)}%`}
               icon="📈"
+              onPress={settings.isPremium ? () => navigation.navigate('CompoundInterestSettings') : undefined}
             />
           </View>
         </Card>
+
+        {/* Developer Settings (only in dev mode) */}
+        {DevTools.isDevMode() && (
+          <>
+            <Text
+              style={{
+                fontSize: theme.typography.sizes.sm,
+                fontWeight: '600',
+                color: theme.colors.textSecondary,
+                marginBottom: theme.spacing.md,
+                marginTop: theme.spacing.xl,
+              }}
+            >
+              DEVELOPER
+            </Text>
+            <Card variant="elevated">
+              <View style={{ paddingVertical: theme.spacing.sm }}>
+                <SettingItem
+                  label="Dev Settings"
+                  value={DevTools.shouldForcePremium() ? 'Premium Forced' : 'Enabled'}
+                  icon="🛠️"
+                  onPress={() => navigation.navigate('DevSettings')}
+                />
+              </View>
+            </Card>
+          </>
+        )}
 
         <View style={{ height: theme.spacing.xxl }} />
       </View>

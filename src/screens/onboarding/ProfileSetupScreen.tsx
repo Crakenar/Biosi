@@ -22,6 +22,7 @@ interface ProfileForm {
 export const ProfileSetupScreen: React.FC = () => {
   const navigation = useNavigation<ProfileSetupNavigationProp>();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [showLoader, setShowLoader] = useState(false);
 
   const {
@@ -70,7 +71,7 @@ export const ProfileSetupScreen: React.FC = () => {
         ]}
       >
         <View style={styles.content}>
-          <ProgressBar currentStep={3} totalSteps={5} />
+          <ProgressBar currentStep={3} totalSteps={6} />
           <Text
             style={{
               fontSize: theme.typography.sizes.xl,
@@ -79,7 +80,7 @@ export const ProfileSetupScreen: React.FC = () => {
               marginBottom: theme.spacing.md,
             }}
           >
-            Let's get to know you
+            {t('onboarding.profile.title')}
           </Text>
           <Text
             style={{
@@ -88,30 +89,30 @@ export const ProfileSetupScreen: React.FC = () => {
               marginBottom: theme.spacing.xl,
             }}
           >
-            We need some basic information to calculate your work hours.
+            {t('onboarding.profile.description')}
           </Text>
 
           <Controller
             control={control}
             rules={{
-              required: 'Name is required',
+              required: t('onboarding.profile.nameRequired'),
               minLength: {
                 value: APP_CONFIG.VALIDATION.MIN_NAME_LENGTH,
-                message: 'Name must be at least 2 characters',
+                message: t('onboarding.profile.nameMin'),
               },
               maxLength: {
                 value: APP_CONFIG.VALIDATION.MAX_NAME_LENGTH,
-                message: 'Name must be at most 50 characters',
+                message: t('onboarding.profile.nameMax'),
               },
               pattern: {
                 value: /^[a-zA-Z\s]+$/,
-                message: 'Name can only contain letters and spaces',
+                message: t('onboarding.profile.namePattern'),
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Your Name"
-                placeholder="Enter your name"
+                label={t('onboarding.profile.nameLabel')}
+                placeholder={t('onboarding.profile.namePlaceholder')}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -125,21 +126,21 @@ export const ProfileSetupScreen: React.FC = () => {
           <Controller
             control={control}
             rules={{
-              required: 'Age is required',
+              required: t('onboarding.profile.ageRequired'),
               validate: (value) => {
                 const age = parseInt(value, 10);
-                if (isNaN(age)) return 'Age must be a number';
+                if (isNaN(age)) return t('onboarding.profile.ageNumber');
                 if (age < APP_CONFIG.VALIDATION.MIN_AGE)
-                  return `Age must be at least ${APP_CONFIG.VALIDATION.MIN_AGE}`;
+                  return t('onboarding.profile.ageMin', { min: APP_CONFIG.VALIDATION.MIN_AGE });
                 if (age > APP_CONFIG.VALIDATION.MAX_AGE)
-                  return `Age must be at most ${APP_CONFIG.VALIDATION.MAX_AGE}`;
+                  return t('onboarding.profile.ageMax', { max: APP_CONFIG.VALIDATION.MAX_AGE });
                 return true;
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Your Age"
-                placeholder="Enter your age"
+                label={t('onboarding.profile.ageLabel')}
+                placeholder={t('onboarding.profile.agePlaceholder')}
                 keyboardType="number-pad"
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -152,7 +153,7 @@ export const ProfileSetupScreen: React.FC = () => {
           />
         </View>
 
-        <Button title="Next" onPress={handleSubmit(onSubmit)} size="large" />
+        <Button title={t('common.next')} onPress={handleSubmit(onSubmit)} size="large" />
 
         <MotivationalLoader visible={showLoader} />
       </ScrollView>

@@ -23,8 +23,11 @@ export function calculateHoursOfWork(itemPrice: number, hourlyWage: number): num
   return itemPrice / hourlyWage;
 }
 
-export function calculateCompoundInterest(principal: number, years: number): number {
-  const rate = APP_CONFIG.COMPOUND_INTEREST_RATE;
+export function calculateCompoundInterest(
+  principal: number,
+  years: number,
+  rate: number = APP_CONFIG.COMPOUND_INTEREST_RATE
+): number {
   return principal * Math.pow(1 + rate, years);
 }
 

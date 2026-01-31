@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppTabParamList, DashboardStackParamList, HistoryStackParamList, SettingsStackParamList } from './types';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSettingsStore } from '../store/settingsStore';
 import { DashboardScreen } from '../screens/dashboard/DashboardScreen';
 import { ItemCheckModal } from '../screens/item-check/ItemCheckModal';
 import { ResultScreen } from '../screens/item-check/ResultScreen';
@@ -16,6 +17,11 @@ import { CurrencySettingsScreen } from '../screens/settings/CurrencySettingsScre
 import { LanguageSettingsScreen } from '../screens/settings/LanguageSettingsScreen';
 import { PremiumPurchaseScreen } from '../screens/settings/PremiumPurchaseScreen';
 import { WorkHoursSettingsScreen } from '../screens/settings/WorkHoursSettingsScreen';
+import { CompoundInterestSettingsScreen } from '../screens/settings/CompoundInterestSettingsScreen';
+import { DevSettingsScreen } from '../screens/settings/DevSettingsScreen';
+import { PremiumAnalyticsScreen } from '../screens/analytics/PremiumAnalyticsScreen';
+import { BudgetScreen } from '../screens/budget/BudgetScreen';
+import { GoalsScreen } from '../screens/goals/GoalsScreen';
 
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
 const HistoryStack = createStackNavigator<HistoryStackParamList>();
@@ -54,6 +60,11 @@ function SettingsNavigator() {
       <SettingsStack.Screen name="LanguageSettings" component={LanguageSettingsScreen} />
       <SettingsStack.Screen name="PremiumPurchase" component={PremiumPurchaseScreen} />
       <SettingsStack.Screen name="WorkHoursSettings" component={WorkHoursSettingsScreen} />
+      <SettingsStack.Screen name="CompoundInterestSettings" component={CompoundInterestSettingsScreen} />
+      <SettingsStack.Screen name="DevSettings" component={DevSettingsScreen} />
+      <SettingsStack.Screen name="PremiumAnalytics" component={PremiumAnalyticsScreen} />
+      <SettingsStack.Screen name="Budget" component={BudgetScreen} />
+      <SettingsStack.Screen name="Goals" component={GoalsScreen} />
     </SettingsStack.Navigator>
   );
 }
@@ -62,6 +73,7 @@ const Tab = createBottomTabNavigator<AppTabParamList>();
 
 export function AppNavigator() {
   const { theme } = useTheme();
+  const { settings } = useSettingsStore();
 
   return (
     <Tab.Navigator
@@ -95,6 +107,40 @@ export function AppNavigator() {
           ),
         }}
       />
+      {settings.isPremium && (
+        <>
+          <Tab.Screen
+            name="AnalyticsTab"
+            component={PremiumAnalyticsScreen}
+            options={{
+              tabBarLabel: 'Analytics',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>📈</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="BudgetTab"
+            component={BudgetScreen}
+            options={{
+              tabBarLabel: 'Budget',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>💰</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="GoalsTab"
+            component={GoalsScreen}
+            options={{
+              tabBarLabel: 'Goals',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>🎯</Text>
+              ),
+            }}
+          />
+        </>
+      )}
       <Tab.Screen
         name="SettingsTab"
         component={SettingsNavigator}

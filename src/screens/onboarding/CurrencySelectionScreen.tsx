@@ -30,6 +30,7 @@ export const CurrencySelectionScreen: React.FC = () => {
   const route = useRoute<CurrencySelectionRouteProp>();
   const { theme } = useTheme();
   const { setUser } = useUserStore();
+  const { t } = useTranslation();
   const { completeOnboarding, setCurrency } = useSettingsStore();
 
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
@@ -42,31 +43,17 @@ export const CurrencySelectionScreen: React.FC = () => {
   );
 
   const handleComplete = () => {
-    const { name, age, wage, hoursPerWeek } = route.params;
-    const hourlyRate = normalizeToHourly(wage.amount, wage.period, hoursPerWeek);
-
-    setUser({
-      id: `user_${Date.now()}`,
-      name,
-      age,
-      currency: selectedCurrency,
-      wage: {
-        ...wage,
-        hourlyRate,
-      },
-      hoursPerWeek,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-
+    const { name, age } = route.params;
     setCurrency(selectedCurrency);
-    completeOnboarding();
+
+    // Navigate to wage input with name, age, and currency
+    navigation.navigate('WageInput', { name, age, currency: selectedCurrency });
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={{ padding: theme.spacing.xl, paddingTop: theme.spacing.xxl * 1.5 }}>
-        <ProgressBar currentStep={5} totalSteps={5} />
+        <ProgressBar currentStep={5} totalSteps={7} />
         <Text
           style={{
             fontSize: theme.typography.sizes.xl,
@@ -75,7 +62,7 @@ export const CurrencySelectionScreen: React.FC = () => {
             marginBottom: theme.spacing.md,
           }}
         >
-          Choose your currency
+          {t('onboarding.currency.title')}
         </Text>
         <Text
           style={{
@@ -84,11 +71,11 @@ export const CurrencySelectionScreen: React.FC = () => {
             marginBottom: theme.spacing.lg,
           }}
         >
-          Select the currency you use for your transactions.
+          {t('onboarding.currency.description')}
         </Text>
 
         <Input
-          placeholder="Search currencies..."
+          placeholder={t('onboarding.currency.searchPlaceholder')}
           value={searchQuery}
           onChangeText={setSearchQuery}
           containerStyle={{ marginBottom: theme.spacing.md }}
@@ -152,7 +139,7 @@ export const CurrencySelectionScreen: React.FC = () => {
       />
 
       <View style={{ padding: theme.spacing.xl }}>
-        <Button title="Complete Setup" onPress={handleComplete} size="large" />
+        <Button title={t('common.next')} onPress={handleComplete} size="large" />
       </View>
     </View>
   );
