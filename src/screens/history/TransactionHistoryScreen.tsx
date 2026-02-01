@@ -150,15 +150,22 @@ export const TransactionHistoryScreen: React.FC = () => {
                       style={{marginBottom: theme.spacing.md}}>
                     <View style={{
                         flexDirection: 'row',
-                        justifyContent: 'space-around'
+                        justifyContent: 'space-between',
+                        gap: theme.spacing.xs,
                     }}>
-                        <View style={{alignItems: 'center'}}>
+                        <View style={{
+                            alignItems: 'center',
+                            flex: 1,
+                            minWidth: 0,
+                        }}>
                             <Text
                                 style={{
                                     fontSize: theme.typography.sizes.xs,
                                     color: theme.colors.textSecondary,
                                     marginBottom: theme.spacing.xs,
                                 }}
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
                             >
                                 {t('history.totalTransactions')}
                             </Text>
@@ -168,17 +175,26 @@ export const TransactionHistoryScreen: React.FC = () => {
                                     fontWeight: 'bold',
                                     color: theme.colors.text,
                                 }}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                minimumFontScale={0.6}
                             >
                                 {filteredTransactions.length}
                             </Text>
                         </View>
-                        <View style={{alignItems: 'center'}}>
+                        <View style={{
+                            alignItems: 'center',
+                            flex: 1,
+                            minWidth: 0,
+                        }}>
                             <Text
                                 style={{
                                     fontSize: theme.typography.sizes.xs,
                                     color: theme.colors.textSecondary,
                                     marginBottom: theme.spacing.xs,
                                 }}
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
                             >
                                 {t('history.totalSpent')}
                             </Text>
@@ -190,18 +206,24 @@ export const TransactionHistoryScreen: React.FC = () => {
                                 }}
                                 numberOfLines={1}
                                 adjustsFontSizeToFit
-                                minimumFontScale={0.7}
+                                minimumFontScale={0.5}
                             >
                                 {formatCurrency(stats.totalSpent, user.currency)}
                             </Text>
                         </View>
-                        <View style={{alignItems: 'center'}}>
+                        <View style={{
+                            alignItems: 'center',
+                            flex: 1,
+                            minWidth: 0,
+                        }}>
                             <Text
                                 style={{
                                     fontSize: theme.typography.sizes.xs,
                                     color: theme.colors.textSecondary,
                                     marginBottom: theme.spacing.xs,
                                 }}
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
                             >
                                 {t('history.totalSaved')}
                             </Text>
@@ -213,7 +235,7 @@ export const TransactionHistoryScreen: React.FC = () => {
                                 }}
                                 numberOfLines={1}
                                 adjustsFontSizeToFit
-                                minimumFontScale={0.7}
+                                minimumFontScale={0.5}
                             >
                                 {formatCurrency(stats.totalSaved, user.currency)}
                             </Text>

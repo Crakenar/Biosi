@@ -49,13 +49,16 @@ export const SettingsScreen: React.FC = () => {
       onPress={onPress}
       disabled={!onPress}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
         {icon && <Text style={{ fontSize: 20, marginRight: theme.spacing.sm }}>{icon}</Text>}
         <Text
           style={{
             fontSize: theme.typography.sizes.md,
             color: theme.colors.text,
+            flex: 1,
           }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {label}
         </Text>
@@ -67,6 +70,8 @@ export const SettingsScreen: React.FC = () => {
             color: theme.colors.textSecondary,
             marginRight: theme.spacing.sm,
           }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {value}
         </Text>
@@ -142,24 +147,29 @@ export const SettingsScreen: React.FC = () => {
                 marginBottom: theme.spacing.md,
               }}
             >
-              ✨ Premium Features
+              {t('settings.premiumFeatures')}
             </Text>
             <Card variant="elevated" style={{ marginBottom: theme.spacing.xl }}>
               <View style={{ paddingVertical: theme.spacing.sm }}>
                 <SettingItem
-                  label="📊 Analytics"
-                  value="View insights"
+                  label={t('settings.premiumItems.analytics')}
+                  value={t('settings.premiumItems.analyticsDesc')}
                   onPress={() => navigation.navigate('PremiumAnalytics')}
                 />
                 <SettingItem
-                  label="💰 Budgets"
-                  value="Set limits"
+                  label={t('settings.premiumItems.budgets')}
+                  value={t('settings.premiumItems.budgetsDesc')}
                   onPress={() => navigation.navigate('Budget')}
                 />
                 <SettingItem
-                  label="🎯 Goals"
-                  value="Track progress"
+                  label={t('settings.premiumItems.goals')}
+                  value={t('settings.premiumItems.goalsDesc')}
                   onPress={() => navigation.navigate('Goals')}
+                />
+                <SettingItem
+                  label={t('settings.premiumItems.export')}
+                  value={t('settings.premiumItems.exportDesc')}
+                  onPress={() => navigation.navigate('Export')}
                 />
               </View>
             </Card>

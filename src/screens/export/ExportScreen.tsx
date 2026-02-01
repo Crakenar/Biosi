@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -10,6 +11,7 @@ import { Modal } from '../../components/common/Modal';
 import Analytics from '../../services/analytics';
 
 export function ExportScreen() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -26,10 +28,10 @@ export function ExportScreen() {
         <View style={styles.lockedContainer}>
           <Text style={styles.lockEmoji}>🔒</Text>
           <Text style={[styles.lockedTitle, { color: theme.colors.text }]}>
-            Export Data
+            {t('export.title')}
           </Text>
           <Text style={[styles.lockedMessage, { color: theme.colors.textSecondary }]}>
-            Upgrade to Premium to export your transaction data
+            {t('export.lockedMessage')}
           </Text>
         </View>
       </View>
@@ -50,7 +52,7 @@ export function ExportScreen() {
       Analytics.trackExport('csv', transactions.length);
       setShowSuccessModal(true);
     } else {
-      setErrorMessage(result.error || 'Failed to export transactions');
+      setErrorMessage(result.error || t('export.errorDefault'));
       setShowErrorModal(true);
     }
   };
@@ -75,7 +77,7 @@ export function ExportScreen() {
       Analytics.trackExport('summary', transactions.length);
       setShowSuccessModal(true);
     } else {
-      setErrorMessage(result.error || 'Failed to export summary');
+      setErrorMessage(result.error || t('export.errorDefault'));
       setShowErrorModal(true);
     }
   };
@@ -100,7 +102,7 @@ export function ExportScreen() {
       Analytics.trackExport('pdf', transactions.length);
       setShowSuccessModal(true);
     } else {
-      setErrorMessage(result.error || 'Failed to export PDF');
+      setErrorMessage(result.error || t('export.errorDefault'));
       setShowErrorModal(true);
     }
   };
@@ -110,17 +112,17 @@ export function ExportScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Export Data</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{t('export.title')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
         <View style={[styles.statsCard, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.statsTitle, { color: theme.colors.text }]}>
-            Your Data
+            {t('export.yourData')}
           </Text>
           <View style={styles.statsRow}>
             <Text style={[styles.statsLabel, { color: theme.colors.textSecondary }]}>
-              Total Transactions:
+              {t('export.totalTransactions')}
             </Text>
             <Text style={[styles.statsValue, { color: theme.colors.text }]}>
               {transactions.length}
@@ -128,7 +130,7 @@ export function ExportScreen() {
           </View>
           <View style={styles.statsRow}>
             <Text style={[styles.statsLabel, { color: theme.colors.textSecondary }]}>
-              Total Spent:
+              {t('export.totalSpent')}
             </Text>
             <Text style={[styles.statsValue, { color: '#FF6B6B' }]}>
               {user?.currency || '$'}
@@ -137,7 +139,7 @@ export function ExportScreen() {
           </View>
           <View style={styles.statsRow}>
             <Text style={[styles.statsLabel, { color: theme.colors.textSecondary }]}>
-              Total Saved:
+              {t('export.totalSaved')}
             </Text>
             <Text style={[styles.statsValue, { color: '#4ECDC4' }]}>
               {user?.currency || '$'}
@@ -150,11 +152,19 @@ export function ExportScreen() {
           <View style={styles.exportHeader}>
             <Text style={styles.exportIcon}>📄</Text>
             <View style={styles.exportInfo}>
-              <Text style={[styles.exportTitle, { color: theme.colors.text }]}>
-                Export as CSV
+              <Text
+                style={[styles.exportTitle, { color: theme.colors.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {t('export.csv.title')}
               </Text>
-              <Text style={[styles.exportDescription, { color: theme.colors.textSecondary }]}>
-                Download all transactions in spreadsheet format
+              <Text
+                style={[styles.exportDescription, { color: theme.colors.textSecondary }]}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {t('export.csv.description')}
               </Text>
             </View>
           </View>
@@ -168,7 +178,7 @@ export function ExportScreen() {
             disabled={exporting}
           >
             <Text style={styles.exportButtonText}>
-              {exporting ? 'Exporting...' : 'Export CSV'}
+              {exporting ? t('export.exporting') : t('export.csv.button')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -177,11 +187,19 @@ export function ExportScreen() {
           <View style={styles.exportHeader}>
             <Text style={styles.exportIcon}>📋</Text>
             <View style={styles.exportInfo}>
-              <Text style={[styles.exportTitle, { color: theme.colors.text }]}>
-                Export Summary
+              <Text
+                style={[styles.exportTitle, { color: theme.colors.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {t('export.summary.title')}
               </Text>
-              <Text style={[styles.exportDescription, { color: theme.colors.textSecondary }]}>
-                Download a text summary of all your transactions
+              <Text
+                style={[styles.exportDescription, { color: theme.colors.textSecondary }]}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {t('export.summary.description')}
               </Text>
             </View>
           </View>
@@ -195,7 +213,7 @@ export function ExportScreen() {
             disabled={exporting}
           >
             <Text style={styles.exportButtonText}>
-              {exporting ? 'Exporting...' : 'Export Summary'}
+              {exporting ? t('export.exporting') : t('export.summary.button')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -204,11 +222,19 @@ export function ExportScreen() {
           <View style={styles.exportHeader}>
             <Text style={styles.exportIcon}>📑</Text>
             <View style={styles.exportInfo}>
-              <Text style={[styles.exportTitle, { color: theme.colors.text }]}>
-                Export as PDF
+              <Text
+                style={[styles.exportTitle, { color: theme.colors.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {t('export.pdf.title')}
               </Text>
-              <Text style={[styles.exportDescription, { color: theme.colors.textSecondary }]}>
-                Generate a formatted PDF report with all transactions
+              <Text
+                style={[styles.exportDescription, { color: theme.colors.textSecondary }]}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {t('export.pdf.description')}
               </Text>
             </View>
           </View>
@@ -222,18 +248,17 @@ export function ExportScreen() {
             disabled={exporting}
           >
             <Text style={styles.exportButtonText}>
-              {exporting ? 'Generating...' : 'Export PDF'}
+              {exporting ? t('export.generating') : t('export.pdf.button')}
             </Text>
           </TouchableOpacity>
         </View>
 
         <View style={[styles.noteCard, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.noteTitle, { color: theme.colors.text }]}>
-            📌 Note
+            {t('export.note.title')}
           </Text>
           <Text style={[styles.noteText, { color: theme.colors.textSecondary }]}>
-            Your data is exported locally and can be shared via any app on your device. We
-            don't upload your data to any servers.
+            {t('export.note.message')}
           </Text>
         </View>
       </ScrollView>
@@ -242,36 +267,36 @@ export function ExportScreen() {
       <Modal
         visible={showNoDataModal}
         onClose={() => setShowNoDataModal(false)}
-        title="No Data"
-        message="You have no transactions to export"
+        title={t('export.noData.title')}
+        message={t('export.noData.message')}
         icon="📊"
         iconColor={theme.colors.textSecondary}
         actions={[
-          { label: 'OK', onPress: () => setShowNoDataModal(false), variant: 'primary' },
+          { label: t('export.ok'), onPress: () => setShowNoDataModal(false), variant: 'primary' },
         ]}
       />
 
       <Modal
         visible={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Success"
-        message="Export completed successfully!"
+        title={t('export.success.title')}
+        message={t('export.success.message')}
         icon="✅"
         iconColor="#4ECDC4"
         actions={[
-          { label: 'OK', onPress: () => setShowSuccessModal(false), variant: 'primary' },
+          { label: t('export.ok'), onPress: () => setShowSuccessModal(false), variant: 'primary' },
         ]}
       />
 
       <Modal
         visible={showErrorModal}
         onClose={() => setShowErrorModal(false)}
-        title="Error"
+        title={t('export.error.title')}
         message={errorMessage}
         icon="❌"
         iconColor="#FF6B6B"
         actions={[
-          { label: 'OK', onPress: () => setShowErrorModal(false), variant: 'primary' },
+          { label: t('export.ok'), onPress: () => setShowErrorModal(false), variant: 'primary' },
         ]}
       />
     </View>
@@ -287,8 +312,9 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   content: {
     flex: 1,

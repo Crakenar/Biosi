@@ -158,6 +158,7 @@
     "appearance": "APPARENCE",
     "display": "AFFICHAGE",
     "about": "À PROPOS",
+    "premiumFeatures": "✨ Fonctionnalités Premium",
     "name": "Nom",
     "age": "Âge",
     "hourlyWage": "Salaire horaire",
@@ -171,6 +172,16 @@
     "compoundInterestRate": "Taux d'intérêt composé",
     "cute": "Mignon",
     "professional": "Professionnel",
+    "premiumItems": {
+      "analytics": "📊 Analyses",
+      "analyticsDesc": "Voir les insights",
+      "budgets": "💰 Budgets",
+      "budgetsDesc": "Définir des limites",
+      "goals": "🎯 Objectifs",
+      "goalsDesc": "Suivre les progrès",
+      "export": "📥 Exporter les Données",
+      "exportDesc": "Télécharger les rapports"
+    },
     "editProfile": {
       "title": "Modifier le profil",
       "description": "Mettez à jour vos informations de profil",
@@ -214,9 +225,12 @@
     "premium": "Premium",
     "unlocked": "Débloqué",
     "title": "Débloquer les fonctionnalités Premium",
-    "subtitle": "Obtenez des analyses avancées et des insights illimités pour seulement 1€/mois",
+    "subtitle": "Obtenez des analyses avancées et des insights illimités",
+    "chooseYourPlan": "Choisissez le plan qui vous convient le mieux",
     "alreadyPremium": "Vous êtes membre Premium !",
     "thankYou": "Merci de soutenir Time Worth. Profitez de toutes les fonctionnalités premium !",
+    "recommended": "Recommandé",
+    "bestValue": "Meilleure Offre",
     "perMonth": "par mois",
     "continueWithFree": "Continuer avec la version gratuite",
     "subscribe": "S'abonner maintenant",
@@ -228,6 +242,17 @@
     "noRestorableFound": "Aucun achat trouvé",
     "error": "Erreur",
     "disclaimer": "Annulez à tout moment. L'abonnement se renouvelle automatiquement. Politique de confidentialité et conditions disponibles dans l'app.",
+    "lifetime": {
+      "title": "Accès à Vie",
+      "description": "Payez une fois, utilisez pour toujours. Aucun abonnement requis.",
+      "savings": "Économisez plus de 80%",
+      "button": "Obtenir l'Accès à Vie - 4,99€"
+    },
+    "monthly": {
+      "title": "Abonnement Mensuel",
+      "description": "par mois - Annulez à tout moment",
+      "button": "S'abonner pour 0,99€/mois"
+    },
     "features": {
       "financialTheme": "Thème Financier",
       "financialThemeDesc": "Thème sombre élégant avec accents dorés pour un suivi professionnel",
@@ -272,6 +297,7 @@
     "periodLabel": "Période",
     "budgetAmount": "Montant du Budget",
     "alertThreshold": "Seuil d'Alerte (%)",
+    "alertThresholdHint": "Recevez une notification lorsque vous atteignez ce pourcentage de votre budget",
     "daily": "Quotidien",
     "weekly": "Hebdomadaire",
     "monthly": "Mensuel",
@@ -284,6 +310,11 @@
     "save": "Enregistrer",
     "delete": "Supprimer",
     "error": "Erreur",
+    "ok": "OK",
+    "gotIt": "Compris",
+    "errorAmountInvalid": "Veuillez entrer un montant de budget valide",
+    "errorThresholdInvalid": "Le seuil d'alerte doit être entre 0 et 100",
+    "warningExceeded": "⚠️ Attention : Vous avez déjà dépensé {{percentage}}% de votre budget {{period}} !",
     "alert": {
       "title": "Alerte Budget",
       "reached": "Vous avez atteint {{percentage}}% de votre budget {{period}}.\n\n{{spent}} / {{budget}}",
@@ -313,6 +344,7 @@
     "daysLeft": "Jours Restants",
     "overdue": "En Retard",
     "targetLabel": "Cible",
+    "complete": "Terminé",
     "cancel": "Annuler",
     "save": "Enregistrer",
     "delete": "Supprimer",
@@ -320,6 +352,8 @@
     "ok": "OK",
     "placeholderName": "ex: Nouvelle Voiture, Vacances",
     "placeholderAmount": "0,00",
+    "errorNameRequired": "Veuillez entrer un nom d'objectif",
+    "errorAmountInvalid": "Veuillez entrer un montant cible valide",
     "alert": {
       "completed": "Objectif Atteint !",
       "progress": "Progression de l'Objectif",
@@ -335,7 +369,40 @@
     "weekly": "📅 Hebdomadaire",
     "daily": "📈 Quotidien",
     "yoy": "🔄 Année/Année",
-    "custom": "🎯 Personnalisé"
+    "custom": "🎯 Personnalisé",
+    "charts": {
+      "categoryBreakdown": {
+        "title": "Répartition par Catégorie",
+        "noData": "Aucune transaction catégorisée pour le moment",
+        "noDataDesc": "Commencez à ajouter des catégories à vos achats pour voir la répartition"
+      },
+      "weekly": {
+        "title": "Tendance de Dépenses de la Semaine",
+        "totalThisWeek": "Total cette semaine :"
+      },
+      "daily": {
+        "title": "Dépenses par Jour de la Semaine",
+        "insight": "Vous dépensez le plus le {{day}} ({{amount}} au total)"
+      },
+      "yoy": {
+        "title": "Comparaison d'Année en Année",
+        "currentYearTotal": "Total {{year}} :",
+        "previousYearTotal": "Total {{year}} :",
+        "change": "Changement :"
+      },
+      "custom": {
+        "title": "Résumé de la Période",
+        "totalTransactions": "Total des Transactions",
+        "days": "Jours",
+        "purchases": "Achats",
+        "itemsSaved": "Articles Économisés",
+        "totalSpent": "Total Dépensé",
+        "totalSaved": "Total Économisé",
+        "hoursOfWork": "{{hours}} heures de travail",
+        "hoursSaved": "{{hours}} heures économisées",
+        "avgDailySpending": "Dépense Quotidienne Moyenne"
+      }
+    }
   },
   "notifications": {
     "budgetExceeded": {
@@ -349,6 +416,48 @@
     "goalProgress": {
       "title": "🎯 Progression de l'Objectif",
       "body": "Vous êtes à {{percentage}}% de votre objectif {{goalName}} ! Continuez à économiser !"
+    }
+  },
+  "export": {
+    "title": "Exporter les Données",
+    "lockedMessage": "Passez à Premium pour exporter vos données de transaction",
+    "yourData": "Vos Données",
+    "totalTransactions": "Total des Transactions :",
+    "totalSpent": "Total Dépensé :",
+    "totalSaved": "Total Économisé :",
+    "exporting": "Export en cours...",
+    "generating": "Génération en cours...",
+    "ok": "OK",
+    "errorDefault": "Échec de l'exportation des données",
+    "csv": {
+      "title": "Exporter en CSV",
+      "description": "Télécharger toutes les transactions au format tableur",
+      "button": "Exporter CSV"
+    },
+    "summary": {
+      "title": "Exporter le Résumé",
+      "description": "Télécharger un résumé texte de toutes vos transactions",
+      "button": "Exporter le Résumé"
+    },
+    "pdf": {
+      "title": "Exporter en PDF",
+      "description": "Générer un rapport PDF formaté avec toutes les transactions",
+      "button": "Exporter PDF"
+    },
+    "note": {
+      "title": "📌 Note",
+      "message": "Vos données sont exportées localement et peuvent être partagées via n'importe quelle application sur votre appareil. Nous ne téléchargeons pas vos données sur nos serveurs."
+    },
+    "noData": {
+      "title": "Aucune Donnée",
+      "message": "Vous n'avez aucune transaction à exporter"
+    },
+    "success": {
+      "title": "Succès",
+      "message": "Export terminé avec succès !"
+    },
+    "error": {
+      "title": "Erreur"
     }
   }
 }

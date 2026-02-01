@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -13,6 +14,7 @@ interface MonthComparison {
 }
 
 export function YearOverYearChart() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -79,7 +81,7 @@ export function YearOverYearChart() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>
-        Year-over-Year Comparison
+        {t('analytics.charts.yoy.title')}
       </Text>
 
       <View style={styles.legend}>
@@ -139,7 +141,7 @@ export function YearOverYearChart() {
       <View style={[styles.summary, { borderTopColor: theme.colors.border }]}>
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryLabel, { color: theme.colors.textSecondary }]}>
-            {currentYear} Total:
+            {t('analytics.charts.yoy.currentYearTotal', { year: currentYear })}
           </Text>
           <Text style={[styles.summaryValue, { color: theme.colors.text }]}>
             {user
@@ -149,7 +151,7 @@ export function YearOverYearChart() {
         </View>
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryLabel, { color: theme.colors.textSecondary }]}>
-            {previousYear} Total:
+            {t('analytics.charts.yoy.previousYearTotal', { year: previousYear })}
           </Text>
           <Text style={[styles.summaryValue, { color: theme.colors.text }]}>
             {user
@@ -159,7 +161,7 @@ export function YearOverYearChart() {
         </View>
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryLabel, { color: theme.colors.textSecondary }]}>
-            Change:
+            {t('analytics.charts.yoy.change')}
           </Text>
           <Text
             style={[

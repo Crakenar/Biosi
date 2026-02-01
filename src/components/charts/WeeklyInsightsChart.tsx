@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -14,6 +15,7 @@ interface DayData {
 }
 
 export function WeeklyInsightsChart() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -52,7 +54,7 @@ export function WeeklyInsightsChart() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>
-        This Week's Spending Pattern
+        {t('analytics.charts.weekly.title')}
       </Text>
 
       <View style={styles.chart}>
@@ -95,7 +97,7 @@ export function WeeklyInsightsChart() {
 
       <View style={styles.summary}>
         <Text style={[styles.summaryText, { color: theme.colors.textSecondary }]}>
-          Total this week:{' '}
+          {t('analytics.charts.weekly.totalThisWeek')}{' '}
           <Text style={{ color: theme.colors.text, fontWeight: 'bold' }}>
             {user
               ? formatCurrency(weeklyData.reduce((sum, d) => sum + d.amount, 0), user.currency)

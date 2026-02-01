@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -8,6 +9,7 @@ import { DateRangeSelector } from './DateRangeSelector';
 import { isWithinInterval, startOfDay, endOfDay, differenceInDays } from 'date-fns';
 
 export function CustomPeriodAnalytics() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -65,13 +67,13 @@ export function CustomPeriodAnalytics() {
 
       <View style={[styles.statsContainer, { backgroundColor: theme.colors.surface }]}>
         <Text style={[styles.statsTitle, { color: theme.colors.text }]}>
-          Period Summary
+          {t('analytics.charts.custom.title')}
         </Text>
 
         <View style={styles.statsGrid}>
           <View style={styles.statBox}>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-              Total Transactions
+              {t('analytics.charts.custom.totalTransactions')}
             </Text>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>
               {analytics.totalTransactions}
@@ -80,7 +82,7 @@ export function CustomPeriodAnalytics() {
 
           <View style={styles.statBox}>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-              Days
+              {t('analytics.charts.custom.days')}
             </Text>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>
               {analytics.dayCount}
@@ -89,7 +91,7 @@ export function CustomPeriodAnalytics() {
 
           <View style={styles.statBox}>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-              Purchases
+              {t('analytics.charts.custom.purchases')}
             </Text>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>
               {analytics.purchaseCount}
@@ -98,7 +100,7 @@ export function CustomPeriodAnalytics() {
 
           <View style={styles.statBox}>
             <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-              Items Saved
+              {t('analytics.charts.custom.itemsSaved')}
             </Text>
             <Text style={[styles.statValue, { color: theme.colors.text }]}>
               {analytics.saveCount}
@@ -111,25 +113,25 @@ export function CustomPeriodAnalytics() {
         <View style={styles.mainStats}>
           <View style={styles.mainStatItem}>
             <Text style={[styles.mainStatLabel, { color: theme.colors.textSecondary }]}>
-              Total Spent
+              {t('analytics.charts.custom.totalSpent')}
             </Text>
             <Text style={[styles.mainStatValue, { color: '#FF6B6B' }]}>
               {user ? formatCurrency(analytics.totalSpent, user.currency) : `$${analytics.totalSpent.toFixed(2)}`}
             </Text>
             <Text style={[styles.mainStatSub, { color: theme.colors.textSecondary }]}>
-              {analytics.totalHoursSpent.toFixed(1)} hours of work
+              {t('analytics.charts.custom.hoursOfWork', { hours: analytics.totalHoursSpent.toFixed(1) })}
             </Text>
           </View>
 
           <View style={styles.mainStatItem}>
             <Text style={[styles.mainStatLabel, { color: theme.colors.textSecondary }]}>
-              Total Saved
+              {t('analytics.charts.custom.totalSaved')}
             </Text>
             <Text style={[styles.mainStatValue, { color: '#4ECDC4' }]}>
               {user ? formatCurrency(analytics.totalSaved, user.currency) : `$${analytics.totalSaved.toFixed(2)}`}
             </Text>
             <Text style={[styles.mainStatSub, { color: theme.colors.textSecondary }]}>
-              {analytics.totalHoursSaved.toFixed(1)} hours saved
+              {t('analytics.charts.custom.hoursSaved', { hours: analytics.totalHoursSaved.toFixed(1) })}
             </Text>
           </View>
         </View>
@@ -138,7 +140,7 @@ export function CustomPeriodAnalytics() {
 
         <View style={styles.insight}>
           <Text style={[styles.insightLabel, { color: theme.colors.textSecondary }]}>
-            Average Daily Spending
+            {t('analytics.charts.custom.avgDailySpending')}
           </Text>
           <Text style={[styles.insightValue, { color: theme.colors.primary }]}>
             {user

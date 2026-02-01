@@ -158,6 +158,7 @@
     "appearance": "APPEARANCE",
     "display": "DISPLAY",
     "about": "ABOUT",
+    "premiumFeatures": "✨ Premium Features",
     "name": "Name",
     "age": "Age",
     "hourlyWage": "Hourly Wage",
@@ -171,6 +172,16 @@
     "compoundInterestRate": "Compound Interest Rate",
     "cute": "Cute",
     "professional": "Professional",
+    "premiumItems": {
+      "analytics": "📊 Analytics",
+      "analyticsDesc": "View insights",
+      "budgets": "💰 Budgets",
+      "budgetsDesc": "Set limits",
+      "goals": "🎯 Goals",
+      "goalsDesc": "Track progress",
+      "export": "📥 Export Data",
+      "exportDesc": "Download reports"
+    },
     "editProfile": {
       "title": "Edit Profile",
       "description": "Update your profile information",
@@ -214,9 +225,12 @@
     "premium": "Premium",
     "unlocked": "Unlocked",
     "title": "Unlock Premium Features",
-    "subtitle": "Get advanced analytics and unlimited insights for just €1/month",
+    "subtitle": "Get advanced analytics and unlimited insights",
+    "chooseYourPlan": "Choose the plan that works best for you",
     "alreadyPremium": "You're a Premium Member!",
     "thankYou": "Thank you for supporting Time Worth. Enjoy all premium features!",
+    "recommended": "Recommended",
+    "bestValue": "Best Value",
     "perMonth": "per month",
     "continueWithFree": "Continue with free version",
     "subscribe": "Subscribe Now",
@@ -228,6 +242,17 @@
     "noRestorableFound": "No Purchase Found",
     "error": "Error",
     "disclaimer": "Cancel anytime. Subscription renews automatically. Privacy policy and terms available in app.",
+    "lifetime": {
+      "title": "Lifetime Access",
+      "description": "Pay once, use forever. No subscription needed.",
+      "savings": "Save over 80%",
+      "button": "Get Lifetime Access - €4.99"
+    },
+    "monthly": {
+      "title": "Monthly Subscription",
+      "description": "per month - Cancel anytime",
+      "button": "Subscribe for €0.99/month"
+    },
     "features": {
       "financialTheme": "Financial Theme",
       "financialThemeDesc": "Elegant dark theme with gold accents for professional tracking",
@@ -272,6 +297,7 @@
     "periodLabel": "Period",
     "budgetAmount": "Budget Amount",
     "alertThreshold": "Alert Threshold (%)",
+    "alertThresholdHint": "Get notified when you reach this percentage of your budget",
     "daily": "Daily",
     "weekly": "Weekly",
     "monthly": "Monthly",
@@ -284,6 +310,11 @@
     "save": "Save",
     "delete": "Delete",
     "error": "Error",
+    "ok": "OK",
+    "gotIt": "Got it",
+    "errorAmountInvalid": "Please enter a valid budget amount",
+    "errorThresholdInvalid": "Alert threshold must be between 0 and 100",
+    "warningExceeded": "⚠️ Warning: You've already spent {{percentage}}% of your {{period}}'s budget!",
     "alert": {
       "title": "Budget Alert",
       "reached": "You've reached {{percentage}}% of your {{period}}'s budget.\n\n{{spent}} / {{budget}}",
@@ -313,6 +344,7 @@
     "daysLeft": "Days Left",
     "overdue": "Overdue",
     "targetLabel": "Target",
+    "complete": "Complete",
     "cancel": "Cancel",
     "save": "Save",
     "delete": "Delete",
@@ -320,6 +352,8 @@
     "ok": "OK",
     "placeholderName": "e.g., New Car, Vacation",
     "placeholderAmount": "0.00",
+    "errorNameRequired": "Please enter a goal name",
+    "errorAmountInvalid": "Please enter a valid target amount",
     "alert": {
       "completed": "Goal Completed!",
       "progress": "Goal Progress",
@@ -335,7 +369,40 @@
     "weekly": "📅 Weekly",
     "daily": "📈 Daily",
     "yoy": "🔄 YoY",
-    "custom": "🎯 Custom"
+    "custom": "🎯 Custom",
+    "charts": {
+      "categoryBreakdown": {
+        "title": "Category Breakdown",
+        "noData": "No categorized transactions yet",
+        "noDataDesc": "Start adding categories to your purchases to see the breakdown"
+      },
+      "weekly": {
+        "title": "This Week's Spending Pattern",
+        "totalThisWeek": "Total this week:"
+      },
+      "daily": {
+        "title": "Spending by Day of Week",
+        "insight": "You spend most on {{day}}s ({{amount}} total)"
+      },
+      "yoy": {
+        "title": "Year-over-Year Comparison",
+        "currentYearTotal": "{{year}} Total:",
+        "previousYearTotal": "{{year}} Total:",
+        "change": "Change:"
+      },
+      "custom": {
+        "title": "Period Summary",
+        "totalTransactions": "Total Transactions",
+        "days": "Days",
+        "purchases": "Purchases",
+        "itemsSaved": "Items Saved",
+        "totalSpent": "Total Spent",
+        "totalSaved": "Total Saved",
+        "hoursOfWork": "{{hours}} hours of work",
+        "hoursSaved": "{{hours}} hours saved",
+        "avgDailySpending": "Average Daily Spending"
+      }
+    }
   },
   "notifications": {
     "budgetExceeded": {
@@ -349,6 +416,48 @@
     "goalProgress": {
       "title": "🎯 Goal Progress",
       "body": "You're at {{percentage}}% of your {{goalName}} goal! Keep saving!"
+    }
+  },
+  "export": {
+    "title": "Export Data",
+    "lockedMessage": "Upgrade to Premium to export your transaction data",
+    "yourData": "Your Data",
+    "totalTransactions": "Total Transactions:",
+    "totalSpent": "Total Spent:",
+    "totalSaved": "Total Saved:",
+    "exporting": "Exporting...",
+    "generating": "Generating...",
+    "ok": "OK",
+    "errorDefault": "Failed to export data",
+    "csv": {
+      "title": "Export as CSV",
+      "description": "Download all transactions in spreadsheet format",
+      "button": "Export CSV"
+    },
+    "summary": {
+      "title": "Export Summary",
+      "description": "Download a text summary of all your transactions",
+      "button": "Export Summary"
+    },
+    "pdf": {
+      "title": "Export as PDF",
+      "description": "Generate a formatted PDF report with all transactions",
+      "button": "Export PDF"
+    },
+    "note": {
+      "title": "📌 Note",
+      "message": "Your data is exported locally and can be shared via any app on your device. We don't upload your data to any servers."
+    },
+    "noData": {
+      "title": "No Data",
+      "message": "You have no transactions to export"
+    },
+    "success": {
+      "title": "Success",
+      "message": "Export completed successfully!"
+    },
+    "error": {
+      "title": "Error"
     }
   }
 }

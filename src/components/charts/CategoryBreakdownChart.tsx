@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -21,6 +22,7 @@ interface CategoryData {
 }
 
 export function CategoryBreakdownChart() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -100,14 +102,14 @@ export function CategoryBreakdownChart() {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
         <Text style={[styles.title, { color: theme.colors.text }]}>
-          Category Breakdown
+          {t('analytics.charts.categoryBreakdown.title')}
         </Text>
         <View style={styles.emptyState}>
           <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-            No categorized transactions yet
+            {t('analytics.charts.categoryBreakdown.noData')}
           </Text>
           <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-            Start adding categories to your purchases to see the breakdown
+            {t('analytics.charts.categoryBreakdown.noDataDesc')}
           </Text>
         </View>
       </View>
@@ -126,7 +128,7 @@ export function CategoryBreakdownChart() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>
-        Category Breakdown
+        {t('analytics.charts.categoryBreakdown.title')}
       </Text>
 
       <View style={styles.chartContainer}>
@@ -148,15 +150,26 @@ export function CategoryBreakdownChart() {
                 ]}
               />
               <Text style={styles.legendIcon}>{data.icon}</Text>
-              <Text style={[styles.legendText, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.legendText, { color: theme.colors.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {data.name}
               </Text>
             </View>
             <View style={styles.legendRight}>
-              <Text style={[styles.legendAmount, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.legendAmount, { color: theme.colors.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {user ? formatCurrency(data.amount, user.currency) : `$${data.amount}`}
               </Text>
-              <Text style={[styles.legendPercentage, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[styles.legendPercentage, { color: theme.colors.textSecondary }]}
+                numberOfLines={1}
+              >
                 {data.percentage.toFixed(1)}%
               </Text>
             </View>
@@ -209,6 +222,7 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 14,
     fontWeight: '500',
+    flex: 1,
   },
   legendRight: {
     alignItems: 'flex-end',

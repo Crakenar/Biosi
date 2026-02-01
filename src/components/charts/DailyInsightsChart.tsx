@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
@@ -14,6 +15,7 @@ interface DayOfWeekData {
 }
 
 export function DailyInsightsChart() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
@@ -62,7 +64,7 @@ export function DailyInsightsChart() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>
-        Spending by Day of Week
+        {t('analytics.charts.daily.title')}
       </Text>
 
       <View style={styles.chart}>
@@ -103,15 +105,12 @@ export function DailyInsightsChart() {
       {highestSpendingDay.totalSpent > 0 && (
         <View style={styles.insight}>
           <Text style={[styles.insightText, { color: theme.colors.textSecondary }]}>
-            💡 You spend most on{' '}
-            <Text style={{ color: theme.colors.primary, fontWeight: 'bold' }}>
-              {highestSpendingDay.dayName}s
-            </Text>
-            {' '}(
-            {user
-              ? formatCurrency(highestSpendingDay.totalSpent, user.currency)
-              : `$${highestSpendingDay.totalSpent.toFixed(2)}`}
-            {' '}total)
+            💡 {t('analytics.charts.daily.insight', {
+              day: highestSpendingDay.dayName,
+              amount: user
+                ? formatCurrency(highestSpendingDay.totalSpent, user.currency)
+                : `$${highestSpendingDay.totalSpent.toFixed(2)}`
+            })}
           </Text>
         </View>
       )}

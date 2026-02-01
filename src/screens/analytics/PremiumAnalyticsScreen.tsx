@@ -23,10 +23,10 @@ export function PremiumAnalyticsScreen() {
         <View style={styles.lockedContainer}>
           <Text style={styles.lockEmoji}>🔒</Text>
           <Text style={[styles.lockedTitle, { color: theme.colors.text }]}>
-            Premium Analytics
+            {t('analytics.title')}
           </Text>
           <Text style={[styles.lockedMessage, { color: theme.colors.textSecondary }]}>
-            Upgrade to Premium to unlock advanced analytics and insights
+            {t('analytics.lockedMessage')}
           </Text>
         </View>
       </View>
@@ -34,21 +34,21 @@ export function PremiumAnalyticsScreen() {
   }
 
   const tabs = [
-    { id: 'categories' as AnalyticsTab, label: '📊 Categories', icon: '📊' },
-    { id: 'weekly' as AnalyticsTab, label: '📅 Weekly', icon: '📅' },
-    { id: 'daily' as AnalyticsTab, label: '📈 Daily', icon: '📈' },
-    { id: 'yoy' as AnalyticsTab, label: '🔄 YoY', icon: '🔄' },
-    { id: 'custom' as AnalyticsTab, label: '🎯 Custom', icon: '🎯' },
+    { id: 'categories' as AnalyticsTab, label: t('analytics.categories'), icon: '📊' },
+    { id: 'weekly' as AnalyticsTab, label: t('analytics.weekly'), icon: '📅' },
+    { id: 'daily' as AnalyticsTab, label: t('analytics.daily'), icon: '📈' },
+    { id: 'yoy' as AnalyticsTab, label: t('analytics.yoy'), icon: '🔄' },
+    { id: 'custom' as AnalyticsTab, label: t('analytics.custom'), icon: '🎯' },
   ];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.text }]}>
-          Premium Analytics
+          {t('analytics.title')}
         </Text>
         <View style={[styles.premiumBadge, { backgroundColor: theme.colors.primary }]}>
-          <Text style={styles.premiumText}>✨ Premium</Text>
+          <Text style={styles.premiumText}>{t('analytics.premium')}</Text>
         </View>
       </View>
 
@@ -107,8 +107,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   premiumBadge: {
     paddingHorizontal: 12,

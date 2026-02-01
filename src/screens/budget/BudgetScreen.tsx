@@ -90,13 +90,13 @@ export function BudgetScreen() {
     const threshold = parseFloat(alertThreshold);
 
     if (isNaN(budgetAmount) || budgetAmount <= 0) {
-      setErrorMessage('Please enter a valid budget amount');
+      setErrorMessage(t('budget.errorAmountInvalid'));
       setShowErrorModal(true);
       return;
     }
 
     if (isNaN(threshold) || threshold < 0 || threshold > 100) {
-      setErrorMessage('Alert threshold must be between 0 and 100');
+      setErrorMessage(t('budget.errorThresholdInvalid'));
       setShowErrorModal(true);
       return;
     }
@@ -124,9 +124,9 @@ export function BudgetScreen() {
     const percentage = (spent / budgetAmount) * 100;
 
     if (percentage >= threshold) {
-      const periodName = period === 'daily' ? 'today' : period === 'weekly' ? 'this week' : 'this month';
+      const periodName = period === 'daily' ? t('budget.period.today') : period === 'weekly' ? t('budget.period.this week') : t('budget.period.this month');
       setExceededMessage(
-        `⚠️ Warning: You've already spent ${percentage.toFixed(0)}% of your ${periodName}'s budget!`
+        t('budget.warningExceeded', { percentage: percentage.toFixed(0), period: periodName })
       );
       setShowExceededAlert(true);
     }
@@ -193,7 +193,7 @@ export function BudgetScreen() {
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>⚠️</Text>
             <Text style={[styles.emptyText, { color: theme.colors.text }]}>
-              No budgets set
+              {t('budget.noBudgets')}
             </Text>
             <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
               {t('budget.noBudgetsDesc')}
@@ -216,10 +216,18 @@ export function BudgetScreen() {
                     style={styles.budgetInfo}
                     onPress={() => openEditModal(budget.id)}
                   >
-                    <Text style={[styles.budgetPeriod, { color: theme.colors.text }]}>
+                    <Text
+                      style={[styles.budgetPeriod, { color: theme.colors.text }]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {budget.period.charAt(0).toUpperCase() + budget.period.slice(1)} Budget
                     </Text>
-                    <Text style={[styles.budgetAmount, { color: theme.colors.textSecondary }]}>
+                    <Text
+                      style={[styles.budgetAmount, { color: theme.colors.textSecondary }]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {user
                         ? formatCurrency(budget.amount, user.currency)
                         : `$${budget.amount}`}
@@ -307,7 +315,7 @@ export function BudgetScreen() {
                   style={styles.deleteButton}
                   onPress={() => handleDelete(budget.id)}
                 >
-                  <Text style={[styles.deleteText, { color: '#FF6B6B' }]}>Delete</Text>
+                  <Text style={[styles.deleteText, { color: '#FF6B6B' }]}>{t('budget.delete')}</Text>
                 </TouchableOpacity>
               </View>
             );
@@ -386,7 +394,7 @@ export function BudgetScreen() {
             placeholderTextColor={theme.colors.textSecondary}
           />
           <Text style={[styles.hint, { color: theme.colors.textSecondary }]}>
-            Get notified when you reach this percentage of your budget
+            {t('budget.alertThresholdHint')}
           </Text>
 
           <View style={styles.modalButtons}>
@@ -440,7 +448,7 @@ export function BudgetScreen() {
         iconColor={theme.colors.error}
         actions={[
           {
-            label: 'OK',
+            label: t('budget.ok'),
             onPress: () => setShowErrorModal(false),
             variant: 'primary',
           },
@@ -451,13 +459,13 @@ export function BudgetScreen() {
       <Modal
         visible={showExceededAlert}
         onClose={() => setShowExceededAlert(false)}
-        title="Budget Alert"
+        title={t('budget.alert.title')}
         message={exceededMessage}
         icon="⚠️"
         iconColor="#FFB84D"
         actions={[
           {
-            label: 'Got it',
+            label: t('budget.gotIt'),
             onPress: () => setShowExceededAlert(false),
             variant: 'primary',
           },
@@ -479,8 +487,9 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   addButton: {
     paddingHorizontal: 16,

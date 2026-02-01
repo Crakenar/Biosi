@@ -47,11 +47,6 @@ class AnalyticsService {
 
     try {
       // In production, send to analytics service
-      // For now, log in dev mode only
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`[Analytics] ${event}`, properties || {});
-      }
 
       // Example: Firebase Analytics
       // import analytics from '@react-native-firebase/analytics';
@@ -179,11 +174,6 @@ class AnalyticsService {
     if (!this.enabled) return;
 
     try {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log('[Analytics] User Properties', properties);
-      }
-
       // Example: Firebase Analytics
       // import analytics from '@react-native-firebase/analytics';
       // analytics().setUserProperties(properties);
@@ -199,11 +189,6 @@ class AnalyticsService {
     if (!this.enabled) return;
 
     try {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log('[Analytics] User ID', userId);
-      }
-
       // Example: Firebase Analytics
       // import analytics from '@react-native-firebase/analytics';
       // analytics().setUserId(userId);

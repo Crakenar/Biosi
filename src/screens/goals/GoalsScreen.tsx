@@ -53,7 +53,7 @@ export function GoalsScreen() {
             {t('goals.title')}
           </Text>
           <Text style={[styles.lockedMessage, { color: theme.colors.textSecondary }]}>
-            Upgrade to Premium to set and track savings goals
+            {t('goals.lockedMessage')}
           </Text>
         </View>
       </View>
@@ -83,14 +83,14 @@ export function GoalsScreen() {
 
   const handleSave = () => {
     if (!goalName.trim()) {
-      setErrorMessage('Please enter a goal name');
+      setErrorMessage(t('goals.errorNameRequired'));
       setShowErrorModal(true);
       return;
     }
 
     const amount = parseFloat(targetAmount);
     if (isNaN(amount) || amount <= 0) {
-      setErrorMessage('Please enter a valid target amount');
+      setErrorMessage(t('goals.errorAmountInvalid'));
       setShowErrorModal(true);
       return;
     }
@@ -169,7 +169,11 @@ export function GoalsScreen() {
                 <View style={styles.goalHeader}>
                   <View style={styles.goalTitleRow}>
                     <Text style={styles.goalIcon}>{goal.icon}</Text>
-                    <Text style={[styles.goalName, { color: theme.colors.text }]}>
+                    <Text
+                      style={[styles.goalName, { color: theme.colors.text }]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {goal.name}
                     </Text>
                   </View>
@@ -177,7 +181,7 @@ export function GoalsScreen() {
                     <View
                       style={[styles.completedBadge, { backgroundColor: '#4ECDC4' }]}
                     >
-                      <Text style={styles.completedText}>✓ Complete</Text>
+                      <Text style={styles.completedText}>✓ {t('goals.complete')}</Text>
                     </View>
                   )}
                 </View>
@@ -415,8 +419,9 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   addButton: {
     paddingHorizontal: 16,
@@ -464,6 +469,8 @@ const styles = StyleSheet.create({
   goalTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
   goalIcon: {
     fontSize: 24,
@@ -472,11 +479,13 @@ const styles = StyleSheet.create({
   goalName: {
     fontSize: 18,
     fontWeight: 'bold',
+    flex: 1,
   },
   completedBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    flexShrink: 0,
   },
   completedText: {
     color: '#fff',

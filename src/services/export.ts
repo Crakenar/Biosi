@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system/build/legacy';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import { Transaction } from '../types/transaction';
@@ -46,7 +46,7 @@ class ExportService {
       const fileUri = FileSystem.documentDirectory + fileName;
 
       await FileSystem.writeAsStringAsync(fileUri, csv, {
-        encoding: FileSystem.EncodingType.UTF8,
+        encoding: 'utf8',
       });
 
       // Share the file
@@ -102,7 +102,7 @@ ${transactions
       const fileUri = FileSystem.documentDirectory + fileName;
 
       await FileSystem.writeAsStringAsync(fileUri, summary, {
-        encoding: FileSystem.EncodingType.UTF8,
+        encoding: 'utf8',
       });
 
       const canShare = await Sharing.isAvailableAsync();

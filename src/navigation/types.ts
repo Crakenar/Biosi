@@ -38,6 +38,7 @@ export type SettingsStackParamList = {
   PremiumAnalytics: undefined;
   Budget: undefined;
   Goals: undefined;
+  Export: undefined;
 };
 
 export type AppTabParamList = {

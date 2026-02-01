@@ -16,6 +16,8 @@ import RevenueCatService from '../../services/revenuecat';
 import type { PurchasesPackage } from 'react-native-purchases';
 import { Modal } from '../../components/common/Modal';
 
+type PlanType = 'monthly' | 'lifetime';
+
 export function PremiumPurchaseScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -25,7 +27,9 @@ export function PremiumPurchaseScreen() {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>('lifetime');
   const [monthlyPackage, setMonthlyPackage] = useState<PurchasesPackage | null>(null);
+  const [lifetimePackage, setLifetimePackage] = useState<PurchasesPackage | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -46,11 +50,6 @@ export function PremiumPurchaseScreen() {
     return symbols[currency] || currency;
   };
 
-  const formatPrice = (currency: string) => {
-    const symbol = getCurrencySymbol(currency);
-    return `${symbol}0.99`;
-  };
-
   useEffect(() => {
     loadOfferings();
   }, []);
@@ -61,11 +60,15 @@ export function PremiumPurchaseScreen() {
       const offering = await RevenueCatService.getOfferings();
 
       if (offering?.availablePackages) {
-        // Find monthly package
         const monthly = offering.availablePackages.find(
           (pkg) => pkg.identifier === '$rc_monthly' || pkg.packageType === 'MONTHLY'
         );
-        setMonthlyPackage(monthly || offering.availablePackages[0] || null);
+        const lifetime = offering.availablePackages.find(
+          (pkg) => pkg.identifier === '$rc_lifetime' || pkg.packageType === 'LIFETIME'
+        );
+
+        setMonthlyPackage(monthly || null);
+        setLifetimePackage(lifetime || null);
       }
     } catch (error) {
     } finally {
@@ -74,15 +77,17 @@ export function PremiumPurchaseScreen() {
   };
 
   const handlePurchase = async () => {
-    if (!monthlyPackage) {
-      setErrorMessage('No subscription package available. Please try again later.');
+    const packageToPurchase = selectedPlan === 'monthly' ? monthlyPackage : lifetimePackage;
+
+    if (!packageToPurchase) {
+      setErrorMessage('No package available. Please try again later.');
       setShowErrorModal(true);
       return;
     }
 
     try {
       setPurchasing(true);
-      const { customerInfo, error } = await RevenueCatService.purchasePackage(monthlyPackage);
+      const { customerInfo, error } = await RevenueCatService.purchasePackage(packageToPurchase);
 
       if (error) {
         if (error !== 'Purchase cancelled') {
@@ -123,7 +128,7 @@ export function PremiumPurchaseScreen() {
         setSuccessMessage(t('premium.restoredMessage'));
         setShowRestoreModal(true);
       } else {
-        setErrorMessage('No active subscriptions found to restore.');
+        setErrorMessage(t('premium.noRestorableFound'));
         setShowErrorModal(true);
       }
     } catch (error: any) {
@@ -172,7 +177,11 @@ export function PremiumPurchaseScreen() {
           <Text style={[styles.featureTitle, { color: theme.colors.text }]}>
             {feature.title}
           </Text>
-          <Text style={[styles.featureDescription, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.featureDescription, { color: theme.colors.textSecondary }]}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
             {feature.description}
           </Text>
         </View>
@@ -180,13 +189,16 @@ export function PremiumPurchaseScreen() {
     ));
   };
 
+  const currencySymbol = user ? getCurrencySymbol(user.currency) : '€';
+
   if (settings.isPremium) {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
+            <Text style={styles.emoji}>✨</Text>
             <Text style={[styles.title, { color: theme.colors.text }]}>
-              ✨ {t('premium.alreadyPremium')}
+              {t('premium.alreadyPremium')}
             </Text>
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
               {t('premium.thankYou')}
@@ -210,12 +222,8 @@ export function PremiumPurchaseScreen() {
             {t('premium.title')}
           </Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            {t('premium.subtitle')}
+            {t('premium.chooseYourPlan')}
           </Text>
-        </View>
-
-        <View style={styles.featuresContainer}>
-          {renderFeaturesList()}
         </View>
 
         {loading ? (
@@ -223,47 +231,109 @@ export function PremiumPurchaseScreen() {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : (
-          <View style={styles.purchaseContainer}>
-            <>
-              <View
-                style={[
-                  styles.priceCard,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.primary,
-                  },
-                ]}
-              >
-                <Text style={[styles.priceLabel, { color: theme.colors.textSecondary }]}>
-                  {t('premium.title')}
-                </Text>
-                <Text style={[styles.priceAmount, { color: theme.colors.primary }]}>
-                  {user ? formatPrice(user.currency) : '€0.99'}
-                </Text>
-                <Text style={[styles.priceDescription, { color: theme.colors.textSecondary }]}>
-                  {t('premium.perMonth')}
-                </Text>
-              </View>
-
+          <>
+            {/* Plan Selection */}
+            <View style={styles.plansContainer}>
+              {/* Lifetime Plan - Best Value */}
               <TouchableOpacity
                 style={[
-                  styles.purchaseButton,
-                  { backgroundColor: theme.colors.primary },
-                  (purchasing || !monthlyPackage) && styles.purchaseButtonDisabled,
+                  styles.planCard,
+                  {
+                    backgroundColor: theme.colors.surface,
+                    borderColor: selectedPlan === 'lifetime' ? theme.colors.primary : theme.colors.border,
+                    borderWidth: selectedPlan === 'lifetime' ? 2 : 1,
+                  },
                 ]}
-                onPress={handlePurchase}
-                disabled={purchasing || !monthlyPackage}
+                onPress={() => setSelectedPlan('lifetime')}
               >
-                {purchasing ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.purchaseButtonText}>
-                    {t('premium.subscribe')}
+                <View style={[styles.bestValueBadge, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.bestValueText}>⭐ {t('premium.bestValue')}</Text>
+                </View>
+                <View style={styles.planHeader}>
+                  <Text style={[styles.planTitle, { color: theme.colors.text }]}>
+                    {t('premium.lifetime.title')}
                   </Text>
-                )}
+                  <View style={[
+                    styles.radioButton,
+                    { borderColor: selectedPlan === 'lifetime' ? theme.colors.primary : '#ccc' }
+                  ]}>
+                    {selectedPlan === 'lifetime' && (
+                      <View style={[styles.radioButtonInner, { backgroundColor: theme.colors.primary }]} />
+                    )}
+                  </View>
+                </View>
+                <Text style={[styles.planPrice, { color: theme.colors.primary }]}>
+                  {currencySymbol}4.99
+                </Text>
+                <Text style={[styles.planDescription, { color: theme.colors.textSecondary }]}>
+                  {t('premium.lifetime.description')}
+                </Text>
+                <View style={[styles.savingsBadge, { backgroundColor: '#4ECDC4' }]}>
+                  <Text style={styles.savingsText}>💰 {t('premium.lifetime.savings')}</Text>
+                </View>
               </TouchableOpacity>
-            </>
 
+              {/* Monthly Plan */}
+              <TouchableOpacity
+                style={[
+                  styles.planCard,
+                  {
+                    backgroundColor: theme.colors.surface,
+                    borderColor: selectedPlan === 'monthly' ? theme.colors.primary : theme.colors.border,
+                    borderWidth: selectedPlan === 'monthly' ? 2 : 1,
+                  },
+                ]}
+                onPress={() => setSelectedPlan('monthly')}
+              >
+                <View style={styles.planHeader}>
+                  <Text style={[styles.planTitle, { color: theme.colors.text }]}>
+                    {t('premium.monthly.title')}
+                  </Text>
+                  <View style={[
+                    styles.radioButton,
+                    { borderColor: selectedPlan === 'monthly' ? theme.colors.primary : '#ccc' }
+                  ]}>
+                    {selectedPlan === 'monthly' && (
+                      <View style={[styles.radioButtonInner, { backgroundColor: theme.colors.primary }]} />
+                    )}
+                  </View>
+                </View>
+                <Text style={[styles.planPrice, { color: theme.colors.text }]}>
+                  {currencySymbol}0.99
+                </Text>
+                <Text style={[styles.planDescription, { color: theme.colors.textSecondary }]}>
+                  {t('premium.monthly.description')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Features List */}
+            <View style={styles.featuresContainer}>
+              {renderFeaturesList()}
+            </View>
+
+            {/* Purchase Button */}
+            <TouchableOpacity
+              style={[
+                styles.purchaseButton,
+                { backgroundColor: theme.colors.primary },
+                purchasing && styles.purchaseButtonDisabled,
+              ]}
+              onPress={handlePurchase}
+              disabled={purchasing}
+            >
+              {purchasing ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.purchaseButtonText}>
+                  {selectedPlan === 'lifetime'
+                    ? t('premium.lifetime.button')
+                    : t('premium.monthly.button')}
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            {/* Restore Button */}
             <TouchableOpacity
               style={styles.restoreButton}
               onPress={handleRestore}
@@ -281,7 +351,7 @@ export function PremiumPurchaseScreen() {
             <Text style={[styles.disclaimer, { color: theme.colors.textSecondary }]}>
               {t('premium.disclaimer')}
             </Text>
-          </View>
+          </>
         )}
       </ScrollView>
 
@@ -329,105 +399,148 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingTop: 60,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 24,
   },
   emoji: {
-    fontSize: 60,
-    marginBottom: 10,
+    fontSize: 50,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
     paddingHorizontal: 20,
-  },
-  featuresContainer: {
-    marginBottom: 30,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-  },
-  featureIcon: {
-    fontSize: 24,
-    marginRight: 15,
-  },
-  featureText: {
-    flex: 1,
-  },
-  featureTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  featureDescription: {
-    fontSize: 14,
-    lineHeight: 20,
   },
   loadingContainer: {
     padding: 40,
     alignItems: 'center',
   },
-  purchaseContainer: {
-    marginTop: 10,
-  },
-  priceCard: {
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 2,
+  plansContainer: {
     marginBottom: 20,
+  },
+  planCard: {
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+    position: 'relative',
+  },
+  bestValueBadge: {
+    position: 'absolute',
+    top: -8,
+    right: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  bestValueText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  planHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  planTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  radioButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  priceLabel: {
-    fontSize: 14,
-    marginBottom: 8,
+  radioButtonInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
-  priceAmount: {
-    fontSize: 36,
+  planPrice: {
+    fontSize: 32,
     fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  planDescription: {
+    fontSize: 13,
     marginBottom: 8,
   },
-  priceDescription: {
-    fontSize: 14,
-    textAlign: 'center',
+  savingsBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  savingsText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  featuresContainer: {
+    marginBottom: 20,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+  },
+  featureIcon: {
+    fontSize: 22,
+    marginRight: 12,
+  },
+  featureText: {
+    flex: 1,
+  },
+  featureTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 3,
+  },
+  featureDescription: {
+    fontSize: 13,
+    lineHeight: 18,
   },
   purchaseButton: {
-    padding: 18,
+    padding: 16,
     borderRadius: 12,
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 12,
   },
   purchaseButtonDisabled: {
     opacity: 0.6,
   },
   purchaseButtonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
   },
   restoreButton: {
-    padding: 15,
+    padding: 14,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   restoreButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
   disclaimer: {
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 16,
   },
 });

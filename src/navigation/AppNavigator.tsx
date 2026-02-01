@@ -22,6 +22,7 @@ import { DevSettingsScreen } from '../screens/settings/DevSettingsScreen';
 import { PremiumAnalyticsScreen } from '../screens/analytics/PremiumAnalyticsScreen';
 import { BudgetScreen } from '../screens/budget/BudgetScreen';
 import { GoalsScreen } from '../screens/goals/GoalsScreen';
+import { ExportScreen } from '../screens/export/ExportScreen';
 
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
 const HistoryStack = createStackNavigator<HistoryStackParamList>();
@@ -65,6 +66,7 @@ function SettingsNavigator() {
       <SettingsStack.Screen name="PremiumAnalytics" component={PremiumAnalyticsScreen} />
       <SettingsStack.Screen name="Budget" component={BudgetScreen} />
       <SettingsStack.Screen name="Goals" component={GoalsScreen} />
+      <SettingsStack.Screen name="Export" component={ExportScreen} />
     </SettingsStack.Navigator>
   );
 }
