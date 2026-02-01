@@ -30,7 +30,7 @@ export function PremiumGate({ featureName, children, fullScreen = false }: Premi
         <TouchableOpacity
           style={[styles.upgradeButton, { backgroundColor: theme.colors.primary }]}
           onPress={() =>
-            navigation.navigate('SettingsTab' as any, {
+            (navigation as any).navigate('SettingsTab', {
               screen: 'PremiumPurchase',
             })
           }
@@ -57,7 +57,7 @@ export function PremiumGate({ featureName, children, fullScreen = false }: Premi
       <TouchableOpacity
         style={[styles.inlineButton, { backgroundColor: theme.colors.primary }]}
         onPress={() =>
-          navigation.navigate('SettingsTab' as any, {
+          (navigation as any).navigate('SettingsTab', {
             screen: 'PremiumPurchase',
           })
         }

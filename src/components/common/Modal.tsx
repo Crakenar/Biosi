@@ -154,22 +154,26 @@ export const Modal: React.FC<ModalProps> = ({
           {actions.length > 0 && (
             <View style={styles.actionsContainer}>
               {actions.map((action, index) => {
-                const buttonStyle = action.variant === 'destructive'
+                const isDestructive = action.variant === 'destructive';
+                const buttonVariant: 'primary' | 'secondary' | 'outline' = isDestructive ? 'primary' : (action.variant || 'primary') as 'primary' | 'secondary' | 'outline';
+                const buttonStyle = isDestructive
                   ? { backgroundColor: theme.colors.error }
                   : undefined;
+
+                const combinedStyle = [
+                  styles.actionButton,
+                  actions.length > 1 && index > 0 && { marginTop: 12 },
+                  buttonStyle,
+                ].filter(Boolean);
 
                 return (
                   <Button
                     key={index}
                     title={action.label}
                     onPress={action.onPress}
-                    variant={action.variant || 'primary'}
+                    variant={buttonVariant}
                     size="large"
-                    style={[
-                      styles.actionButton,
-                      actions.length > 1 && index > 0 && { marginTop: 12 },
-                      buttonStyle,
-                    ]}
+                    style={combinedStyle as any}
                     disabled={action.loading}
                   />
                 );

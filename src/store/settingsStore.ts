@@ -75,7 +75,6 @@ export const useSettingsStore = create<SettingsStore>()(
         try {
           // If premium is forced via env, keep it enabled
           if (shouldForcePremium()) {
-            console.log('⚠️ Premium is forced via EXPO_PUBLIC_FORCE_PREMIUM env var');
             set((state) => ({
               settings: { ...state.settings, isPremium: true },
             }));
@@ -87,7 +86,6 @@ export const useSettingsStore = create<SettingsStore>()(
             settings: { ...state.settings, isPremium },
           }));
         } catch (error) {
-          console.error('Failed to sync premium status:', error);
         }
       },
       completeOnboarding: () =>

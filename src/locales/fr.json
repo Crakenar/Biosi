@@ -115,7 +115,8 @@
     "enterValidPrice": "Veuillez entrer un prix valide",
     "pricePositive": "Le prix doit être positif",
     "labelRequired": "Veuillez entrer un nom d'article",
-    "userNotFound": "Profil utilisateur introuvable"
+    "userNotFound": "Profil utilisateur introuvable",
+    "category": "Catégorie"
   },
   "result": {
     "purchaseRecorded": "Achat enregistré",
@@ -260,6 +261,29 @@
     "historyLimitMessage": "Les utilisateurs gratuits peuvent voir les 3 derniers mois d'historique. Passez à Premium pour un accès illimité à toutes vos transactions."
   },
   "budget": {
+    "title": "Alertes Budget",
+    "newBudget": "+ Nouveau Budget",
+    "editBudget": "Modifier le Budget",
+    "deleteBudget": "Supprimer le Budget",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer ce budget ?",
+    "noBudgets": "Aucun budget pour le moment",
+    "noBudgetsDesc": "Créez un budget pour recevoir des alertes lorsque vous approchez de votre limite de dépenses",
+    "lockedMessage": "Passez à Premium pour définir des budgets et recevoir des alertes de dépenses",
+    "periodLabel": "Période",
+    "budgetAmount": "Montant du Budget",
+    "alertThreshold": "Seuil d'Alerte (%)",
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "spent": "Dépensé",
+    "remaining": "Restant",
+    "budget": "Budget",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "error": "Erreur",
     "alert": {
       "title": "Alerte Budget",
       "reached": "Vous avez atteint {{percentage}}% de votre budget {{period}}.\n\n{{spent}} / {{budget}}",
@@ -272,11 +296,59 @@
     }
   },
   "goals": {
+    "title": "Objectifs",
+    "newGoal": "+ Nouvel Objectif",
+    "editGoal": "Modifier l'Objectif",
+    "deleteGoal": "Supprimer l'Objectif",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cet objectif ?",
+    "noGoals": "Aucun objectif pour le moment",
+    "noGoalsDesc": "Définissez votre premier objectif d'épargne pour commencer à suivre vos progrès",
+    "lockedMessage": "Passez à Premium pour définir et suivre des objectifs d'épargne",
+    "goalName": "Nom de l'Objectif",
+    "targetAmount": "Montant Cible",
+    "icon": "Icône",
+    "targetDate": "Date Cible",
+    "current": "Actuel",
+    "target": "Cible",
+    "daysLeft": "Jours Restants",
+    "overdue": "En Retard",
+    "targetLabel": "Cible",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "error": "Erreur",
+    "ok": "OK",
+    "placeholderName": "ex: Nouvelle Voiture, Vacances",
+    "placeholderAmount": "0,00",
     "alert": {
       "completed": "Objectif Atteint !",
       "progress": "Progression de l'Objectif",
       "completedMessage": "{{icon}} Félicitations !\n\nVous avez atteint votre objectif : {{name}}\n\nCible : {{amount}}",
       "progressMessage": "{{icon}} Excellent progrès sur {{name}} !\n\nVous êtes à {{percentage}}% de votre objectif.\n\n{{current}} / {{target}}"
+    }
+  },
+  "analytics": {
+    "title": "Analyses Premium",
+    "premium": "✨ Premium",
+    "lockedMessage": "Passez à Premium pour débloquer les analyses avancées et les insights",
+    "categories": "📊 Catégories",
+    "weekly": "📅 Hebdomadaire",
+    "daily": "📈 Quotidien",
+    "yoy": "🔄 Année/Année",
+    "custom": "🎯 Personnalisé"
+  },
+  "notifications": {
+    "budgetExceeded": {
+      "title": "⚠️ Budget Dépassé !",
+      "body": "Vous avez dépensé {{percentage}}% de votre budget {{period}} ({{spent}} / {{budget}})"
+    },
+    "goalCompleted": {
+      "title": "🎉 Objectif Atteint !",
+      "body": "Félicitations ! Vous avez atteint votre objectif : {{goalName}} ({{currency}}{{targetAmount}})"
+    },
+    "goalProgress": {
+      "title": "🎯 Progression de l'Objectif",
+      "body": "Vous êtes à {{percentage}}% de votre objectif {{goalName}} ! Continuez à économiser !"
     }
   }
 }

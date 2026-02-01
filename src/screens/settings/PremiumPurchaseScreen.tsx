@@ -68,7 +68,6 @@ export function PremiumPurchaseScreen() {
         setMonthlyPackage(monthly || offering.availablePackages[0] || null);
       }
     } catch (error) {
-      console.error('Failed to load offerings:', error);
     } finally {
       setLoading(false);
     }
@@ -141,27 +140,6 @@ export function PremiumPurchaseScreen() {
     navigation.goBack();
   };
 
-  if (settings.isPremium) {
-    return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
-              ✨ {t('premium.alreadyPremium')}
-            </Text>
-            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-              {t('premium.thankYou')}
-            </Text>
-          </View>
-
-          <View style={styles.featuresContainer}>
-            {renderFeaturesList()}
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-
   const renderFeaturesList = () => {
     const features = [
       { icon: '🎨', title: t('premium.features.financialTheme'), description: t('premium.features.financialThemeDesc') },
@@ -201,6 +179,27 @@ export function PremiumPurchaseScreen() {
       </View>
     ));
   };
+
+  if (settings.isPremium) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.text }]}>
+              ✨ {t('premium.alreadyPremium')}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+              {t('premium.thankYou')}
+            </Text>
+          </View>
+
+          <View style={styles.featuresContainer}>
+            {renderFeaturesList()}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>

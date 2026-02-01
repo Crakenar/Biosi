@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import ExportService from '../../services/export';
 import { aggregateTransactions } from '../../utils/aggregations';
+import { Modal } from '../../components/common/Modal';
+import Analytics from '../../services/analytics';
 
 export function ExportScreen() {
   const { theme } = useTheme();
@@ -13,6 +15,10 @@ export function ExportScreen() {
   const { user } = useUserStore();
   const { settings } = useSettingsStore();
   const [exporting, setExporting] = useState(false);
+  const [showNoDataModal, setShowNoDataModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!settings.isPremium) {
     return (
@@ -32,7 +38,7 @@ export function ExportScreen() {
 
   const handleExportCSV = async () => {
     if (transactions.length === 0) {
-      Alert.alert('No Data', 'You have no transactions to export');
+      setShowNoDataModal(true);
       return;
     }
 
@@ -41,15 +47,17 @@ export function ExportScreen() {
     setExporting(false);
 
     if (result.success) {
-      Alert.alert('Success', 'Transactions exported successfully!');
+      Analytics.trackExport('csv', transactions.length);
+      setShowSuccessModal(true);
     } else {
-      Alert.alert('Error', result.error || 'Failed to export transactions');
+      setErrorMessage(result.error || 'Failed to export transactions');
+      setShowErrorModal(true);
     }
   };
 
   const handleExportSummary = async () => {
     if (transactions.length === 0) {
-      Alert.alert('No Data', 'You have no transactions to export');
+      setShowNoDataModal(true);
       return;
     }
 
@@ -64,9 +72,36 @@ export function ExportScreen() {
     setExporting(false);
 
     if (result.success) {
-      Alert.alert('Success', 'Summary exported successfully!');
+      Analytics.trackExport('summary', transactions.length);
+      setShowSuccessModal(true);
     } else {
-      Alert.alert('Error', result.error || 'Failed to export summary');
+      setErrorMessage(result.error || 'Failed to export summary');
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (transactions.length === 0) {
+      setShowNoDataModal(true);
+      return;
+    }
+
+    setExporting(true);
+    const stats = aggregateTransactions(transactions);
+    const result = await ExportService.exportToPDF(
+      transactions,
+      user?.currency || 'USD',
+      stats.totalSpent,
+      stats.totalSaved
+    );
+    setExporting(false);
+
+    if (result.success) {
+      Analytics.trackExport('pdf', transactions.length);
+      setShowSuccessModal(true);
+    } else {
+      setErrorMessage(result.error || 'Failed to export PDF');
+      setShowErrorModal(true);
     }
   };
 
@@ -165,6 +200,33 @@ export function ExportScreen() {
           </TouchableOpacity>
         </View>
 
+        <View style={[styles.exportCard, { backgroundColor: theme.colors.surface }]}>
+          <View style={styles.exportHeader}>
+            <Text style={styles.exportIcon}>📑</Text>
+            <View style={styles.exportInfo}>
+              <Text style={[styles.exportTitle, { color: theme.colors.text }]}>
+                Export as PDF
+              </Text>
+              <Text style={[styles.exportDescription, { color: theme.colors.textSecondary }]}>
+                Generate a formatted PDF report with all transactions
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={[
+              styles.exportButton,
+              { backgroundColor: theme.colors.primary },
+              exporting && styles.exportButtonDisabled,
+            ]}
+            onPress={handleExportPDF}
+            disabled={exporting}
+          >
+            <Text style={styles.exportButtonText}>
+              {exporting ? 'Generating...' : 'Export PDF'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={[styles.noteCard, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.noteTitle, { color: theme.colors.text }]}>
             📌 Note
@@ -175,6 +237,43 @@ export function ExportScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* Modals */}
+      <Modal
+        visible={showNoDataModal}
+        onClose={() => setShowNoDataModal(false)}
+        title="No Data"
+        message="You have no transactions to export"
+        icon="📊"
+        iconColor={theme.colors.textSecondary}
+        actions={[
+          { label: 'OK', onPress: () => setShowNoDataModal(false), variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Success"
+        message="Export completed successfully!"
+        icon="✅"
+        iconColor="#4ECDC4"
+        actions={[
+          { label: 'OK', onPress: () => setShowSuccessModal(false), variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error"
+        message={errorMessage}
+        icon="❌"
+        iconColor="#FF6B6B"
+        actions={[
+          { label: 'OK', onPress: () => setShowErrorModal(false), variant: 'primary' },
+        ]}
+      />
     </View>
   );
 }

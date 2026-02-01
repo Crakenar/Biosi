@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
   Switch,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -14,6 +13,7 @@ import { useSettingsStore } from '../../store/settingsStore';
 import { useTransactionStore } from '../../store/transactionStore';
 import { DevTools } from '../../services/devTools';
 import * as Updates from 'expo-updates';
+import { Modal } from '../../components/common/Modal';
 
 export function DevSettingsScreen() {
   const { theme } = useTheme();
@@ -23,6 +23,14 @@ export function DevSettingsScreen() {
   const [forcePremium, setForcePremium] = useState(
     process.env.EXPO_PUBLIC_FORCE_PREMIUM === 'true'
   );
+  const [showResetAllModal, setShowResetAllModal] = useState(false);
+  const [showResetOnboardingModal, setShowResetOnboardingModal] = useState(false);
+  const [showTogglePremiumModal, setShowTogglePremiumModal] = useState(false);
+  const [showAddMockModal, setShowAddMockModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!DevTools.isDevMode()) {
     return (
@@ -41,124 +49,76 @@ export function DevSettingsScreen() {
   }
 
   const handleResetAll = () => {
-    Alert.alert(
-      '⚠️ Reset Everything',
-      'This will delete ALL data including transactions, settings, goals, and budgets. The app will reload.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: async () => {
-            await DevTools.resetAllData();
-            Alert.alert('Success', 'All data reset. Reloading app...', [
-              {
-                text: 'OK',
-                onPress: async () => {
-                  await Updates.reloadAsync();
-                },
-              },
-            ]);
-          },
-        },
-      ]
-    );
+    setShowResetAllModal(true);
+  };
+
+  const confirmResetAll = async () => {
+    setShowResetAllModal(false);
+    try {
+      await DevTools.resetAllData();
+      setSuccessMessage('All data reset. Reloading app...');
+      setShowSuccessModal(true);
+      setTimeout(async () => {
+        await Updates.reloadAsync();
+      }, 1500);
+    } catch (error) {
+      setErrorMessage('Failed to reset data');
+      setShowErrorModal(true);
+    }
   };
 
   const handleResetOnboarding = () => {
-    Alert.alert(
-      '🔄 Reset Onboarding',
-      'This will reset onboarding status. App will reload to show onboarding.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          onPress: async () => {
-            await DevTools.resetOnboarding();
-            Alert.alert('Success', 'Onboarding reset. Reloading app...', [
-              {
-                text: 'OK',
-                onPress: async () => {
-                  await Updates.reloadAsync();
-                },
-              },
-            ]);
-          },
-        },
-      ]
-    );
+    setShowResetOnboardingModal(true);
+  };
+
+  const confirmResetOnboarding = async () => {
+    setShowResetOnboardingModal(false);
+    try {
+      await DevTools.resetOnboarding();
+      setSuccessMessage('Onboarding reset. Reloading app...');
+      setShowSuccessModal(true);
+      setTimeout(async () => {
+        await Updates.reloadAsync();
+      }, 1500);
+    } catch (error) {
+      setErrorMessage('Failed to reset onboarding');
+      setShowErrorModal(true);
+    }
   };
 
   const handleTogglePremium = async () => {
-    const newStatus = await DevTools.togglePremium();
-    setPremium(newStatus);
-    Alert.alert(
-      'Success',
-      `Premium ${newStatus ? 'enabled' : 'disabled'}. Reloading app...`,
-      [
-        {
-          text: 'OK',
-          onPress: async () => {
-            await Updates.reloadAsync();
-          },
-        },
-      ]
-    );
+    try {
+      const newStatus = await DevTools.togglePremium();
+      setPremium(newStatus);
+      setSuccessMessage(`Premium ${newStatus ? 'enabled' : 'disabled'}. Reloading app...`);
+      setShowSuccessModal(true);
+      setTimeout(async () => {
+        await Updates.reloadAsync();
+      }, 1500);
+    } catch (error) {
+      setErrorMessage('Failed to toggle premium');
+      setShowErrorModal(true);
+    }
   };
 
   const handleAddMockData = () => {
-    Alert.alert('Add Mock Transactions', 'How many transactions?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: '10',
-        onPress: () => {
-          try {
-            const mockTransactions = DevTools.getMockTransactions(10);
-            // Add directly to store instead of storage
-            const transactionStore = useTransactionStore.getState();
-            mockTransactions.forEach(tx => {
-              transactionStore.addTransaction(tx);
-            });
-            console.log(`✅ Added ${mockTransactions.length} mock transactions`);
-            Alert.alert('Success', `Added ${mockTransactions.length} transactions! Check History.`);
-          } catch (error) {
-            Alert.alert('Error', `Failed to add transactions: ${error}`);
-          }
-        },
-      },
-      {
-        text: '50',
-        onPress: () => {
-          try {
-            const mockTransactions = DevTools.getMockTransactions(50);
-            const transactionStore = useTransactionStore.getState();
-            mockTransactions.forEach(tx => {
-              transactionStore.addTransaction(tx);
-            });
-            console.log(`✅ Added ${mockTransactions.length} mock transactions`);
-            Alert.alert('Success', `Added ${mockTransactions.length} transactions! Check History.`);
-          } catch (error) {
-            Alert.alert('Error', `Failed to add transactions: ${error}`);
-          }
-        },
-      },
-      {
-        text: '100',
-        onPress: () => {
-          try {
-            const mockTransactions = DevTools.getMockTransactions(100);
-            const transactionStore = useTransactionStore.getState();
-            mockTransactions.forEach(tx => {
-              transactionStore.addTransaction(tx);
-            });
-            console.log(`✅ Added ${mockTransactions.length} mock transactions`);
-            Alert.alert('Success', `Added ${mockTransactions.length} transactions! Check History.`);
-          } catch (error) {
-            Alert.alert('Error', `Failed to add transactions: ${error}`);
-          }
-        },
-      },
-    ]);
+    setShowAddMockModal(true);
+  };
+
+  const addMockTransactions = (count: number) => {
+    setShowAddMockModal(false);
+    try {
+      const mockTransactions = DevTools.getMockTransactions(count);
+      const transactionStore = useTransactionStore.getState();
+      mockTransactions.forEach(tx => {
+        transactionStore.addTransaction(tx);
+      });
+      setSuccessMessage(`Added ${mockTransactions.length} transactions! Check History.`);
+      setShowSuccessModal(true);
+    } catch (error) {
+      setErrorMessage(`Failed to add transactions: ${error}`);
+      setShowErrorModal(true);
+    }
   };
 
   return (
@@ -299,6 +259,73 @@ export function DevSettingsScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* Modals */}
+      <Modal
+        visible={showResetAllModal}
+        onClose={() => setShowResetAllModal(false)}
+        title="Reset Everything"
+        message="This will delete ALL data including transactions, settings, goals, and budgets. The app will reload."
+        icon="⚠️"
+        iconColor="#FF6B6B"
+        actions={[
+          { label: 'Cancel', onPress: () => setShowResetAllModal(false), variant: 'outline' },
+          { label: 'Reset', onPress: confirmResetAll, variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showResetOnboardingModal}
+        onClose={() => setShowResetOnboardingModal(false)}
+        title="Reset Onboarding"
+        message="This will reset onboarding status. App will reload to show onboarding."
+        icon="🔄"
+        iconColor={theme.colors.primary}
+        actions={[
+          { label: 'Cancel', onPress: () => setShowResetOnboardingModal(false), variant: 'outline' },
+          { label: 'Reset', onPress: confirmResetOnboarding, variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showAddMockModal}
+        onClose={() => setShowAddMockModal(false)}
+        title="Add Mock Transactions"
+        message="How many transactions?"
+        icon="📊"
+        iconColor={theme.colors.primary}
+        actions={[
+          { label: 'Cancel', onPress: () => setShowAddMockModal(false), variant: 'outline' },
+          { label: '10', onPress: () => addMockTransactions(10), variant: 'outline' },
+          { label: '50', onPress: () => addMockTransactions(50), variant: 'outline' },
+          { label: '100', onPress: () => addMockTransactions(100), variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Success"
+        message={successMessage}
+        icon="✅"
+        iconColor="#4ECDC4"
+        actions={[
+          { label: 'OK', onPress: () => setShowSuccessModal(false), variant: 'primary' },
+        ]}
+        dismissable={false}
+      />
+
+      <Modal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error"
+        message={errorMessage}
+        icon="❌"
+        iconColor="#FF6B6B"
+        actions={[
+          { label: 'OK', onPress: () => setShowErrorModal(false), variant: 'primary' },
+        ]}
+      />
     </View>
   );
 }

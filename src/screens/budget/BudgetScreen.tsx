@@ -9,8 +9,10 @@ import {
   Switch,
 } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '../../components/common/Modal';
 import { useBudgetStore } from '../../store/budgetStore';
+import Analytics from '../../services/analytics';
 import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
 import { useSettingsStore } from '../../store/settingsStore';
@@ -26,6 +28,7 @@ import {
 } from 'date-fns';
 
 export function BudgetScreen() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { budgets, addBudget, updateBudget, deleteBudget, toggleBudget } = useBudgetStore();
   const { transactions } = useTransactionStore();
@@ -44,14 +47,19 @@ export function BudgetScreen() {
   const [showExceededAlert, setShowExceededAlert] = useState(false);
   const [exceededMessage, setExceededMessage] = useState('');
 
+  // Sort budgets by most recent first
+  const sortedBudgets = [...budgets].sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
   if (!settings.isPremium) {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={styles.lockedContainer}>
           <Text style={styles.lockEmoji}>🔒</Text>
-          <Text style={[styles.lockedTitle, { color: theme.colors.text }]}>Budget Alerts</Text>
+          <Text style={[styles.lockedTitle, { color: theme.colors.text }]}>{t('budget.title')}</Text>
           <Text style={[styles.lockedMessage, { color: theme.colors.textSecondary }]}>
-            Upgrade to Premium to set budgets and get spending alerts
+            {t('budget.lockedMessage')}
           </Text>
         </View>
       </View>
@@ -106,6 +114,9 @@ export function BudgetScreen() {
         alertThreshold: threshold,
         enabled: true,
       });
+
+      // Track analytics
+      Analytics.trackBudgetCreated(budgetAmount, period);
     }
 
     // Check if budget is already exceeded
@@ -168,12 +179,12 @@ export function BudgetScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Budget Alerts</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{t('budget.title')}</Text>
         <TouchableOpacity
           style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
           onPress={openAddModal}
         >
-          <Text style={styles.addButtonText}>+ New Budget</Text>
+          <Text style={styles.addButtonText}>{t('budget.newBudget')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -185,11 +196,11 @@ export function BudgetScreen() {
               No budgets set
             </Text>
             <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-              Create a budget to get alerts when you're approaching your spending limit
+              {t('budget.noBudgetsDesc')}
             </Text>
           </View>
         ) : (
-          budgets.map((budget) => {
+          sortedBudgets.map((budget) => {
             const spent = calculateSpending(budget.period);
             const percentage = (spent / budget.amount) * 100;
             const isOverBudget = percentage > 100;
@@ -257,13 +268,13 @@ export function BudgetScreen() {
 
                 <View style={styles.budgetStats}>
                   <Text style={[styles.statText, { color: theme.colors.text }]}>
-                    Spent:{' '}
+                    {t('budget.spent')}:{' '}
                     <Text style={{ fontWeight: 'bold' }}>
                       {user ? formatCurrency(spent, user.currency) : `$${spent.toFixed(2)}`}
                     </Text>
                   </Text>
                   <Text style={[styles.statText, { color: theme.colors.textSecondary }]}>
-                    Remaining:{' '}
+                    {t('budget.remaining')}:{' '}
                     <Text
                       style={{
                         fontWeight: 'bold',
@@ -308,11 +319,11 @@ export function BudgetScreen() {
       <Modal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title={editingBudget ? 'Edit Budget' : 'New Budget'}
+        title={editingBudget ? t('budget.editBudget') : t('budget.newBudget')}
         dismissable={true}
       >
         <View>
-          <Text style={[styles.label, { color: theme.colors.text }]}>Period</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('budget.periodLabel')}</Text>
           <View style={styles.periodButtons}>
             {(['daily', 'weekly', 'monthly'] as const).map((p) => (
               <TouchableOpacity
@@ -333,13 +344,13 @@ export function BudgetScreen() {
                     { color: period === p ? '#fff' : theme.colors.text },
                   ]}
                 >
-                  {p.charAt(0).toUpperCase() + p.slice(1)}
+                  {t(`budget.${p}`)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <Text style={[styles.label, { color: theme.colors.text }]}>Budget Amount</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('budget.budgetAmount')}</Text>
           <TextInput
             style={[
               styles.input,
@@ -357,7 +368,7 @@ export function BudgetScreen() {
           />
 
           <Text style={[styles.label, { color: theme.colors.text }]}>
-            Alert Threshold (%)
+            {t('budget.alertThreshold')}
           </Text>
           <TextInput
             style={[
@@ -384,14 +395,14 @@ export function BudgetScreen() {
               onPress={() => setModalVisible(false)}
             >
               <Text style={[styles.modalButtonText, { color: theme.colors.text }]}>
-                Cancel
+                {t('budget.cancel')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
               onPress={handleSave}
             >
-              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Save</Text>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('budget.save')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -401,18 +412,18 @@ export function BudgetScreen() {
       <Modal
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Budget"
-        message="Are you sure you want to delete this budget?"
+        title={t('budget.deleteBudget')}
+        message={t('budget.deleteConfirmMessage')}
         icon="⚠️"
         iconColor="#FF6B6B"
         actions={[
           {
-            label: 'Cancel',
+            label: t('budget.cancel'),
             onPress: () => setShowDeleteModal(false),
             variant: 'outline',
           },
           {
-            label: 'Delete',
+            label: t('budget.delete'),
             onPress: confirmDelete,
             variant: 'primary',
           },
@@ -423,7 +434,7 @@ export function BudgetScreen() {
       <Modal
         visible={showErrorModal}
         onClose={() => setShowErrorModal(false)}
-        title="Error"
+        title={t('budget.error')}
         message={errorMessage}
         icon="❌"
         iconColor={theme.colors.error}

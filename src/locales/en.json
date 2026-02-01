@@ -115,7 +115,8 @@
     "enterValidPrice": "Please enter a valid price",
     "pricePositive": "Price must be positive",
     "labelRequired": "Please enter an item name",
-    "userNotFound": "User profile not found"
+    "userNotFound": "User profile not found",
+    "category": "Category"
   },
   "result": {
     "purchaseRecorded": "Purchase Recorded",
@@ -260,6 +261,29 @@
     "historyLimitMessage": "Free users can view the last 3 months of history. Upgrade to Premium for unlimited access to all your transactions."
   },
   "budget": {
+    "title": "Budget Alerts",
+    "newBudget": "+ New Budget",
+    "editBudget": "Edit Budget",
+    "deleteBudget": "Delete Budget",
+    "deleteConfirmMessage": "Are you sure you want to delete this budget?",
+    "noBudgets": "No budgets yet",
+    "noBudgetsDesc": "Create a budget to get alerts when you're approaching your spending limit",
+    "lockedMessage": "Upgrade to Premium to set budgets and get spending alerts",
+    "periodLabel": "Period",
+    "budgetAmount": "Budget Amount",
+    "alertThreshold": "Alert Threshold (%)",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "spent": "Spent",
+    "remaining": "Remaining",
+    "budget": "Budget",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "error": "Error",
     "alert": {
       "title": "Budget Alert",
       "reached": "You've reached {{percentage}}% of your {{period}}'s budget.\n\n{{spent}} / {{budget}}",
@@ -272,11 +296,59 @@
     }
   },
   "goals": {
+    "title": "Savings Goals",
+    "newGoal": "+ New Goal",
+    "editGoal": "Edit Goal",
+    "deleteGoal": "Delete Goal",
+    "deleteConfirmMessage": "Are you sure you want to delete this goal?",
+    "noGoals": "No goals yet",
+    "noGoalsDesc": "Set your first savings goal to start tracking your progress",
+    "lockedMessage": "Upgrade to Premium to set and track savings goals",
+    "goalName": "Goal Name",
+    "targetAmount": "Target Amount",
+    "icon": "Icon",
+    "targetDate": "Target Date",
+    "current": "Current",
+    "target": "Target",
+    "daysLeft": "Days Left",
+    "overdue": "Overdue",
+    "targetLabel": "Target",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "error": "Error",
+    "ok": "OK",
+    "placeholderName": "e.g., New Car, Vacation",
+    "placeholderAmount": "0.00",
     "alert": {
       "completed": "Goal Completed!",
       "progress": "Goal Progress",
       "completedMessage": "{{icon}} Congratulations!\n\nYou've reached your goal: {{name}}\n\nTarget: {{amount}}",
       "progressMessage": "{{icon}} Great progress on {{name}}!\n\nYou're at {{percentage}}% of your goal.\n\n{{current}} / {{target}}"
+    }
+  },
+  "analytics": {
+    "title": "Premium Analytics",
+    "premium": "✨ Premium",
+    "lockedMessage": "Upgrade to Premium to unlock advanced analytics and insights",
+    "categories": "📊 Categories",
+    "weekly": "📅 Weekly",
+    "daily": "📈 Daily",
+    "yoy": "🔄 YoY",
+    "custom": "🎯 Custom"
+  },
+  "notifications": {
+    "budgetExceeded": {
+      "title": "⚠️ Budget Exceeded!",
+      "body": "You've spent {{percentage}}% of your {{period}} budget ({{spent}} / {{budget}})"
+    },
+    "goalCompleted": {
+      "title": "🎉 Goal Completed!",
+      "body": "Congratulations! You've reached your goal: {{goalName}} ({{currency}}{{targetAmount}})"
+    },
+    "goalProgress": {
+      "title": "🎯 Goal Progress",
+      "body": "You're at {{percentage}}% of your {{goalName}} goal! Keep saving!"
     }
   }
 }

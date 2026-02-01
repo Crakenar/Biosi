@@ -23,7 +23,10 @@ import {
   endOfDay,
   endOfWeek,
   endOfMonth,
+  differenceInDays,
 } from 'date-fns';
+import Analytics from '../../services/analytics';
+import NotificationService from '../../services/notifications';
 
 type ResultNavigationProp = StackNavigationProp<DashboardStackParamList, 'Result'>;
 type ResultRouteProp = RouteProp<DashboardStackParamList, 'Result'>;
@@ -66,6 +69,13 @@ export const ResultScreen: React.FC = () => {
       tension: 50,
       friction: 7,
     }).start();
+
+    // Track analytics event
+    if (type === 'purchased') {
+      Analytics.trackPurchase(price, user?.currency || 'USD');
+    } else {
+      Analytics.trackSavings(price, user?.currency || 'USD');
+    }
   }, []);
 
   const checkBudgetAlertsSync = (): boolean => {
@@ -111,6 +121,24 @@ export const ResultScreen: React.FC = () => {
           budgetAmount: budget.amount,
         });
         setShowBudgetAlert(true);
+
+        // Track analytics
+        if (percentage >= 100) {
+          Analytics.trackBudgetExceeded(percentage, periodName);
+        } else {
+          Analytics.trackBudgetAlert(percentage, periodName);
+        }
+
+        // Send push notification
+        NotificationService.scheduleBudgetExceededAlert(
+          budget.id,
+          periodName,
+          percentage,
+          totalSpent,
+          budget.amount,
+          user?.currency || 'USD'
+        );
+
         return true; // Found an alert to show
       }
     }
@@ -153,6 +181,26 @@ export const ResultScreen: React.FC = () => {
           completed: justCompleted,
         });
         setShowGoalAlert(true);
+
+        // Track analytics
+        if (justCompleted) {
+          const daysToComplete = differenceInDays(new Date(), new Date(goal.createdAt));
+          Analytics.trackGoalCompleted(goal.name, goal.targetAmount, daysToComplete);
+
+          // Send completion notification
+          NotificationService.scheduleGoalCompletionAlert(
+            goal.id,
+            goal.name,
+            goal.targetAmount,
+            user?.currency || 'USD'
+          );
+        } else {
+          Analytics.trackGoalProgress(goal.name, percentage);
+
+          // Send progress notification
+          NotificationService.scheduleGoalProgressAlert(goal.id, goal.name, percentage);
+        }
+
         return true;
       }
     }

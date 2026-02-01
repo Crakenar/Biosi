@@ -8,8 +8,10 @@ import {
   TextInput,
 } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '../../components/common/Modal';
 import { useGoalsStore } from '../../store/goalsStore';
+import Analytics from '../../services/analytics';
 import { useUserStore } from '../../store/userStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { formatCurrency } from '../../utils/formatters';
@@ -19,6 +21,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 const GOAL_ICONS = ['🎯', '🏠', '🚗', '✈️', '💰', '🎓', '💍', '🎁', '📱', '⌚'];
 
 export function GoalsScreen() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { goals, addGoal, updateGoal, deleteGoal } = useGoalsStore();
   const { user } = useUserStore();
@@ -36,13 +39,18 @@ export function GoalsScreen() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Sort goals by most recent first
+  const sortedGoals = [...goals].sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
   if (!settings.isPremium) {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={styles.lockedContainer}>
           <Text style={styles.lockEmoji}>🔒</Text>
           <Text style={[styles.lockedTitle, { color: theme.colors.text }]}>
-            Savings Goals
+            {t('goals.title')}
           </Text>
           <Text style={[styles.lockedMessage, { color: theme.colors.textSecondary }]}>
             Upgrade to Premium to set and track savings goals
@@ -102,6 +110,9 @@ export function GoalsScreen() {
         icon: selectedIcon,
         currentAmount: 0,
       });
+
+      // Track analytics
+      Analytics.trackGoalCreated(amount, user?.currency || 'USD');
     }
 
     setModalVisible(false);
@@ -123,12 +134,12 @@ export function GoalsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Savings Goals</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{t('goals.title')}</Text>
         <TouchableOpacity
           style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
           onPress={openAddModal}
         >
-          <Text style={styles.addButtonText}>+ New Goal</Text>
+          <Text style={styles.addButtonText}>{t('goals.newGoal')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -137,14 +148,14 @@ export function GoalsScreen() {
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>🎯</Text>
             <Text style={[styles.emptyText, { color: theme.colors.text }]}>
-              No goals yet
+              {t('goals.noGoals')}
             </Text>
             <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-              Set your first savings goal to start tracking your progress
+              {t('goals.noGoalsDesc')}
             </Text>
           </View>
         ) : (
-          goals.map((goal) => {
+          sortedGoals.map((goal) => {
             const progress = (goal.currentAmount / goal.targetAmount) * 100;
             const daysLeft = differenceInDays(new Date(goal.targetDate), new Date());
 
@@ -198,7 +209,7 @@ export function GoalsScreen() {
                 <View style={styles.goalStats}>
                   <View>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-                      Current
+                      {t('goals.current')}
                     </Text>
                     <Text style={[styles.statValue, { color: theme.colors.text }]}>
                       {user ? formatCurrency(goal.currentAmount, user.currency) : `$${goal.currentAmount}`}
@@ -206,7 +217,7 @@ export function GoalsScreen() {
                   </View>
                   <View>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-                      Target
+                      {t('goals.target')}
                     </Text>
                     <Text style={[styles.statValue, { color: theme.colors.text }]}>
                       {user ? formatCurrency(goal.targetAmount, user.currency) : `$${goal.targetAmount}`}
@@ -214,7 +225,7 @@ export function GoalsScreen() {
                   </View>
                   <View>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-                      {daysLeft > 0 ? 'Days Left' : 'Overdue'}
+                      {daysLeft > 0 ? t('goals.daysLeft') : t('goals.overdue')}
                     </Text>
                     <Text
                       style={[
@@ -228,7 +239,7 @@ export function GoalsScreen() {
                 </View>
 
                 <Text style={[styles.targetDate, { color: theme.colors.textSecondary }]}>
-                  Target: {format(new Date(goal.targetDate), 'MMM dd, yyyy')}
+                  {t('goals.targetLabel')}: {format(new Date(goal.targetDate), 'MMM dd, yyyy')}
                 </Text>
               </TouchableOpacity>
             );
@@ -240,11 +251,11 @@ export function GoalsScreen() {
       <Modal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title={editingGoal ? 'Edit Goal' : 'New Goal'}
+        title={editingGoal ? t('goals.editGoal') : t('goals.newGoal')}
         dismissable={true}
       >
         <View>
-          <Text style={[styles.label, { color: theme.colors.text }]}>Goal Name</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('goals.goalName')}</Text>
           <TextInput
             style={[
               styles.input,
@@ -256,11 +267,11 @@ export function GoalsScreen() {
             ]}
             value={goalName}
             onChangeText={setGoalName}
-            placeholder="e.g., New Car, Vacation"
+            placeholder={t('goals.placeholderName')}
             placeholderTextColor={theme.colors.textSecondary}
           />
 
-          <Text style={[styles.label, { color: theme.colors.text }]}>Target Amount</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('goals.targetAmount')}</Text>
           <TextInput
             style={[
               styles.input,
@@ -273,11 +284,11 @@ export function GoalsScreen() {
             value={targetAmount}
             onChangeText={setTargetAmount}
             keyboardType="decimal-pad"
-            placeholder="0.00"
+            placeholder={t('goals.placeholderAmount')}
             placeholderTextColor={theme.colors.textSecondary}
           />
 
-          <Text style={[styles.label, { color: theme.colors.text }]}>Icon</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('goals.icon')}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -303,7 +314,7 @@ export function GoalsScreen() {
             ))}
           </ScrollView>
 
-          <Text style={[styles.label, { color: theme.colors.text }]}>Target Date</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>{t('goals.targetDate')}</Text>
           <TouchableOpacity
             style={[
               styles.dateButton,
@@ -337,14 +348,14 @@ export function GoalsScreen() {
               onPress={() => setModalVisible(false)}
             >
               <Text style={[styles.modalButtonText, { color: theme.colors.text }]}>
-                Cancel
+                {t('goals.cancel')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
               onPress={handleSave}
             >
-              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Save</Text>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('goals.save')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -354,18 +365,18 @@ export function GoalsScreen() {
       <Modal
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Goal"
-        message="Are you sure you want to delete this goal?"
+        title={t('goals.deleteGoal')}
+        message={t('goals.deleteConfirmMessage')}
         icon="⚠️"
         iconColor="#FF6B6B"
         actions={[
           {
-            label: 'Cancel',
+            label: t('goals.cancel'),
             onPress: () => setShowDeleteModal(false),
             variant: 'outline',
           },
           {
-            label: 'Delete',
+            label: t('goals.delete'),
             onPress: confirmDelete,
             variant: 'primary',
           },
@@ -376,13 +387,13 @@ export function GoalsScreen() {
       <Modal
         visible={showErrorModal}
         onClose={() => setShowErrorModal(false)}
-        title="Error"
+        title={t('goals.error')}
         message={errorMessage}
         icon="❌"
         iconColor={theme.colors.error}
         actions={[
           {
-            label: 'OK',
+            label: t('goals.ok'),
             onPress: () => setShowErrorModal(false),
             variant: 'primary',
           },

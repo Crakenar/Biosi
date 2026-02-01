@@ -23,8 +23,6 @@ import { calculateHoursOfWork, formatHours } from '../../services/calculations';
 import { formatCurrency } from '../../utils/formatters';
 import { useTranslation } from 'react-i18next';
 import { CATEGORIES, TransactionCategory } from '../../types/category';
-import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'react-native';
 
 type ItemCheckNavigationProp = StackNavigationProp<DashboardStackParamList, 'ItemCheck'>;
 
@@ -43,7 +41,6 @@ export const ItemCheckModal: React.FC = () => {
   const [labelError, setLabelError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory>('other');
   const [note, setNote] = useState('');
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   const progressAnim = useState(new Animated.Value(0))[0];
 
@@ -64,24 +61,6 @@ export const ItemCheckModal: React.FC = () => {
     }
   }, [price, user]);
 
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to attach photos!');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.7,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setPhotoUri(result.assets[0].uri);
-    }
-  };
 
   const handleAction = (type: 'purchased' | 'saved') => {
     // Reset errors
@@ -118,7 +97,6 @@ export const ItemCheckModal: React.FC = () => {
       label: label.trim(),
       category: settings.isPremium ? selectedCategory : undefined,
       note: settings.isPremium && note.trim() ? note.trim() : undefined,
-      photoUri: settings.isPremium && photoUri ? photoUri : undefined,
     });
 
     navigation.navigate('Result', {
@@ -193,11 +171,12 @@ export const ItemCheckModal: React.FC = () => {
                 marginBottom: theme.spacing.sm,
               }}
             >
-              Category
+              {t('itemCheck.category')}
             </Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
               style={{ marginBottom: theme.spacing.sm }}
             >
               {CATEGORIES.map((category) => (
@@ -271,50 +250,6 @@ export const ItemCheckModal: React.FC = () => {
               numberOfLines={3}
             />
 
-            <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: 12,
-                marginTop: theme.spacing.sm,
-                borderRadius: theme.borderRadius.md,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                backgroundColor: theme.colors.surface,
-              }}
-              onPress={pickImage}
-            >
-              <Text style={{ fontSize: 20, marginRight: 8 }}>📷</Text>
-              <Text style={{ color: theme.colors.text }}>
-                {photoUri ? 'Change Photo' : 'Attach Receipt/Photo'}
-              </Text>
-            </TouchableOpacity>
-
-            {photoUri && (
-              <View style={{ marginTop: theme.spacing.sm, position: 'relative' }}>
-                <Image
-                  source={{ uri: photoUri }}
-                  style={{ width: '100%', height: 150, borderRadius: 8 }}
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    backgroundColor: 'rgba(0,0,0,0.6)',
-                    borderRadius: 16,
-                    width: 32,
-                    height: 32,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  onPress={() => setPhotoUri(null)}
-                >
-                  <Text style={{ color: '#fff', fontSize: 18 }}>×</Text>
-                </TouchableOpacity>
-              </View>
-            )}
           </View>
         )}
 

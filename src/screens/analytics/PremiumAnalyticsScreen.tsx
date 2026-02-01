@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useSettingsStore } from '../../store/settingsStore';
 import { CategoryBreakdownChart } from '../../components/charts/CategoryBreakdownChart';
@@ -11,6 +12,7 @@ import { CustomPeriodAnalytics } from '../../components/charts/CustomPeriodAnaly
 type AnalyticsTab = 'categories' | 'weekly' | 'daily' | 'yoy' | 'custom';
 
 export function PremiumAnalyticsScreen() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { settings } = useSettingsStore();
   const [activeTab, setActiveTab] = useState<AnalyticsTab>('categories');
@@ -131,10 +133,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tabText: {
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
   },
   content: {
     flex: 1,

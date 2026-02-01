@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import i18n from './i18n';
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -7,6 +8,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -34,7 +37,6 @@ class NotificationService {
 
       return finalStatus === 'granted';
     } catch (error) {
-      console.error('Error requesting notification permissions:', error);
       return false;
     }
   }
@@ -47,7 +49,6 @@ class NotificationService {
     try {
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
-        console.log('Notification permissions not granted');
         return null;
       }
 
@@ -62,7 +63,6 @@ class NotificationService {
 
       return notificationId;
     } catch (error) {
-      console.error('Error scheduling notification:', error);
       return null;
     }
   }
@@ -71,7 +71,6 @@ class NotificationService {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
     } catch (error) {
-      console.error('Error canceling notification:', error);
     }
   }
 
@@ -79,7 +78,126 @@ class NotificationService {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
     } catch (error) {
-      console.error('Error canceling all notifications:', error);
+    }
+  }
+
+  async scheduleGoalAlert(
+    goalId: string,
+    title: string,
+    body: string
+  ): Promise<string | null> {
+    try {
+      const hasPermission = await this.requestPermissions();
+      if (!hasPermission) {
+        return null;
+      }
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: { goalId, type: 'goal' },
+        },
+        trigger: null, // Immediate notification
+      });
+
+      return notificationId;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async scheduleGoalCompletionAlert(
+    goalId: string,
+    goalName: string,
+    targetAmount: number,
+    currency: string
+  ): Promise<string | null> {
+    try {
+      const hasPermission = await this.requestPermissions();
+      if (!hasPermission) {
+        return null;
+      }
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: i18n.t('notifications.goalCompleted.title'),
+          body: i18n.t('notifications.goalCompleted.body', {
+            goalName,
+            currency,
+            targetAmount: targetAmount.toFixed(2),
+          }),
+          data: { goalId, type: 'goal_completed' },
+        },
+        trigger: null, // Immediate notification
+      });
+
+      return notificationId;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async scheduleGoalProgressAlert(
+    goalId: string,
+    goalName: string,
+    percentage: number
+  ): Promise<string | null> {
+    try {
+      const hasPermission = await this.requestPermissions();
+      if (!hasPermission) {
+        return null;
+      }
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: i18n.t('notifications.goalProgress.title'),
+          body: i18n.t('notifications.goalProgress.body', {
+            percentage: percentage.toFixed(0),
+            goalName,
+          }),
+          data: { goalId, type: 'goal_progress' },
+        },
+        trigger: null, // Immediate notification
+      });
+
+      return notificationId;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async scheduleBudgetExceededAlert(
+    budgetId: string,
+    period: string,
+    percentage: number,
+    spent: number,
+    budget: number,
+    currency: string
+  ): Promise<string | null> {
+    try {
+      const hasPermission = await this.requestPermissions();
+      if (!hasPermission) {
+        return null;
+      }
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: i18n.t('notifications.budgetExceeded.title'),
+          body: i18n.t('notifications.budgetExceeded.body', {
+            percentage: percentage.toFixed(0),
+            period,
+            spent: `${currency}${spent.toFixed(2)}`,
+            budget: `${currency}${budget}`,
+          }),
+          data: { budgetId, type: 'budget_exceeded' },
+        },
+        trigger: null, // Immediate notification
+      });
+
+      return notificationId;
+    } catch (error) {
+      return null;
     }
   }
 }

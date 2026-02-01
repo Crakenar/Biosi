@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -15,6 +14,7 @@ import { useTransactionStore } from '../../store/transactionStore';
 import { useUserStore } from '../../store/userStore';
 import { Button } from '../../components/common/Button';
 import { formatCurrency } from '../../utils/formatters';
+import { Modal } from '../../components/common/Modal';
 
 const PRESET_RATES = [
   { label: 'Conservative', rate: 0.04, description: 'Low-risk investments (4%)' },
@@ -33,6 +33,8 @@ export function CompoundInterestSettingsScreen() {
   const [selectedPreset, setSelectedPreset] = useState<number | null>(
     PRESET_RATES.findIndex((p) => p.rate === settings.compoundInterestRate)
   );
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Calculate projections
   const totalSaved = transactions
@@ -57,14 +59,12 @@ export function CompoundInterestSettingsScreen() {
     const rateValue = parseFloat(customRate);
 
     if (isNaN(rateValue) || rateValue < 0 || rateValue > 100) {
-      Alert.alert('Invalid Rate', 'Please enter a rate between 0 and 100');
+      setShowErrorModal(true);
       return;
     }
 
     updateSettings({ compoundInterestRate: rateValue / 100 });
-    Alert.alert('Success', 'Interest rate updated successfully', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+    setShowSuccessModal(true);
   };
 
   const currentRate = parseFloat(customRate) / 100;
@@ -214,6 +214,42 @@ export function CompoundInterestSettingsScreen() {
 
         <Button title="Save Changes" onPress={handleSave} size="large" />
       </View>
+
+      {/* Modals */}
+      <Modal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Invalid Rate"
+        message="Please enter a rate between 0 and 100"
+        icon="❌"
+        iconColor="#FF6B6B"
+        actions={[
+          { label: 'OK', onPress: () => setShowErrorModal(false), variant: 'primary' },
+        ]}
+      />
+
+      <Modal
+        visible={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          navigation.goBack();
+        }}
+        title="Success"
+        message="Interest rate updated successfully"
+        icon="✅"
+        iconColor="#4ECDC4"
+        actions={[
+          {
+            label: 'OK',
+            onPress: () => {
+              setShowSuccessModal(false);
+              navigation.goBack();
+            },
+            variant: 'primary',
+          },
+        ]}
+        dismissable={false}
+      />
     </ScrollView>
   );
 }

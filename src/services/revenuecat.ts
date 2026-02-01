@@ -26,7 +26,6 @@ class RevenueCatService {
    */
   async initialize(userId?: string): Promise<void> {
     if (this.isConfigured) {
-      console.log('RevenueCat already configured');
       return;
     }
 
@@ -34,8 +33,6 @@ class RevenueCatService {
       const apiKey = REVENUECAT_CONFIG.apiKey;
 
       if (!apiKey || apiKey.includes('YOUR')) {
-        console.warn('⚠️ RevenueCat API key not configured. Premium features will not work.');
-        console.warn('Add your API keys to .env file or src/config/revenuecat.ts');
         return;
       }
 
@@ -48,14 +45,11 @@ class RevenueCatService {
       });
 
       this.isConfigured = true;
-      console.log('✅ RevenueCat configured successfully');
 
       // Set up listener for customer info updates
       Purchases.addCustomerInfoUpdateListener((info) => {
-        console.log('Customer info updated:', this.isPremium(info));
       });
     } catch (error) {
-      console.error('❌ Failed to configure RevenueCat:', error);
     }
   }
 
@@ -76,7 +70,6 @@ class RevenueCatService {
       const customerInfo = await Purchases.getCustomerInfo();
       return customerInfo;
     } catch (error) {
-      console.error('Failed to get customer info:', error);
       return null;
     }
   }
@@ -90,7 +83,6 @@ class RevenueCatService {
       if (!customerInfo) return false;
       return this.isPremium(customerInfo);
     } catch (error) {
-      console.error('Failed to check premium status:', error);
       return false;
     }
   }
@@ -103,7 +95,6 @@ class RevenueCatService {
       const offerings = await Purchases.getOfferings();
       return offerings.current;
     } catch (error) {
-      console.error('Failed to get offerings:', error);
       return null;
     }
   }
@@ -122,7 +113,6 @@ class RevenueCatService {
       if (error.userCancelled) {
         return { customerInfo: null, error: 'Purchase cancelled' };
       }
-      console.error('Purchase failed:', error);
       return { customerInfo: null, error: error.message || 'Purchase failed' };
     }
   }
@@ -138,7 +128,6 @@ class RevenueCatService {
       const customerInfo = await Purchases.restorePurchases();
       return { customerInfo, error: null };
     } catch (error: any) {
-      console.error('Restore failed:', error);
       return { customerInfo: null, error: error.message || 'Restore failed' };
     }
   }
@@ -149,9 +138,7 @@ class RevenueCatService {
   async login(userId: string): Promise<void> {
     try {
       await Purchases.logIn(userId);
-      console.log('User logged in to RevenueCat:', userId);
     } catch (error) {
-      console.error('Failed to login to RevenueCat:', error);
     }
   }
 
@@ -161,9 +148,7 @@ class RevenueCatService {
   async logout(): Promise<void> {
     try {
       await Purchases.logOut();
-      console.log('User logged out from RevenueCat');
     } catch (error) {
-      console.error('Failed to logout from RevenueCat:', error);
     }
   }
 }

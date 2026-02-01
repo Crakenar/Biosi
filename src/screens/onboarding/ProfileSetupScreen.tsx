@@ -53,7 +53,7 @@ export const ProfileSetupScreen: React.FC = () => {
     setShowLoader(true);
     setTimeout(() => {
       setShowLoader(false);
-      navigation.navigate('WageInput', { name: data.name.trim(), age });
+      navigation.navigate('CurrencySelection', { name: data.name.trim(), age });
     }, 1500);
   };
 

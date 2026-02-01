@@ -17,6 +17,7 @@ import { useUserStore } from '../../store/userStore';
 import RevenueCatService from '../../services/revenuecat';
 import type { PurchasesPackage } from 'react-native-purchases';
 import { Modal } from '../../components/common/Modal';
+import Analytics from '../../services/analytics';
 
 type NavigationProp = StackNavigationProp<OnboardingStackParamList, 'PremiumUpsell'>;
 
@@ -60,25 +61,19 @@ export function PremiumUpsellScreen() {
   const loadOfferings = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Loading RevenueCat offerings...');
       const offering = await RevenueCatService.getOfferings();
 
-      console.log('📦 Offering received:', offering);
-      console.log('📦 Available packages:', offering?.availablePackages);
 
       if (offering?.availablePackages) {
         const monthly = offering.availablePackages.find(
           (pkg) => pkg.identifier === '$rc_monthly' || pkg.packageType === 'MONTHLY'
         );
-        console.log('💰 Monthly package found:', monthly);
         setMonthlyPackage(monthly || offering.availablePackages[0] || null);
       } else {
-        console.warn('⚠️ No offerings available from RevenueCat');
         // Set a dummy package to allow testing even if RevenueCat isn't configured
         setMonthlyPackage({} as any);
       }
     } catch (error) {
-      console.error('❌ Failed to load offerings:', error);
       // Set a dummy package to allow testing even if RevenueCat fails
       setMonthlyPackage({} as any);
     } finally {
@@ -87,11 +82,8 @@ export function PremiumUpsellScreen() {
   };
 
   const handlePurchase = async () => {
-    console.log('🛒 Purchase button clicked');
-    console.log('📦 Monthly package:', monthlyPackage);
 
     if (!monthlyPackage) {
-      console.error('❌ No monthly package available');
       setErrorMessage('No subscription package available. Please try again later.');
       setShowErrorModal(true);
       return;
@@ -99,18 +91,14 @@ export function PremiumUpsellScreen() {
 
     try {
       setPurchasing(true);
-      console.log('💳 Calling RevenueCat purchasePackage...');
       const { customerInfo, error } = await RevenueCatService.purchasePackage(monthlyPackage);
 
-      console.log('📋 Purchase result:', { customerInfo, error });
 
       if (error) {
         if (error !== 'Purchase cancelled') {
-          console.error('❌ Purchase error:', error);
           setErrorMessage(error);
           setShowErrorModal(true);
         } else {
-          console.log('🚫 Purchase cancelled by user');
         }
         setPurchasing(false);
         return;
@@ -118,17 +106,19 @@ export function PremiumUpsellScreen() {
 
       if (customerInfo) {
         const isPremium = RevenueCatService.isPremium(customerInfo);
-        console.log('🔍 Checking premium status:', isPremium);
-        console.log('🔍 Entitlements:', customerInfo.entitlements);
-        console.log('🔍 Active subscriptions:', customerInfo.activeSubscriptions);
 
         // Always activate premium if purchase was successful
-        console.log('✅ Premium activated!');
         setPremium(true);
+
+        // Track analytics
+        Analytics.trackPremiumPurchase(
+          monthlyPackage?.identifier || 'monthly',
+          0.99
+        );
+
         setShowSuccessModal(true);
       }
     } catch (error: any) {
-      console.error('❌ Purchase exception:', error);
       setErrorMessage(error.message || 'Something went wrong');
       setShowErrorModal(true);
     } finally {
@@ -139,10 +129,12 @@ export function PremiumUpsellScreen() {
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
     completeOnboarding();
+    Analytics.trackEvent('onboarding_completed', { premium: true });
   };
 
   const handleSkip = () => {
     completeOnboarding();
+    Analytics.trackEvent('onboarding_completed', { premium: false });
   };
 
   const features = [

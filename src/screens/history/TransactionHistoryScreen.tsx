@@ -130,9 +130,9 @@ export const TransactionHistoryScreen: React.FC = () => {
                             borderRadius: theme.borderRadius.md,
                             marginBottom: theme.spacing.md,
                         }}
-                        onPress={() => navigation.navigate('SettingsTab', {
+                        onPress={() => (navigation as any).navigate('SettingsTab', {
                             screen: 'PremiumPurchase'
-                        } as any)}
+                        })}
                     >
                         <Text style={{
                             color: '#fff',
