@@ -87,7 +87,7 @@ export function PremiumUpsellScreen() {
     const packageToPurchase = selectedPlan === 'monthly' ? monthlyPackage : lifetimePackage;
 
     if (!packageToPurchase) {
-      setErrorMessage('No package available. Please try again later.');
+      setErrorMessage(t('premium.noPackageAvailable'));
       setShowErrorModal(true);
       return;
     }
@@ -114,7 +114,7 @@ export function PremiumUpsellScreen() {
         setShowSuccessModal(true);
       }
     } catch (error: any) {
-      setErrorMessage(error.message || 'Something went wrong');
+      setErrorMessage(error.message || t('premium.somethingWentWrong'));
       setShowErrorModal(true);
     } finally {
       setPurchasing(false);
@@ -321,7 +321,7 @@ export function PremiumUpsellScreen() {
         iconColor={theme.colors.error}
         actions={[
           {
-            label: 'OK',
+            label: t('common.ok'),
             onPress: () => setShowErrorModal(false),
             variant: 'outline',
           },

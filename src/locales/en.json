@@ -11,7 +11,8 @@
     "search": "Search",
     "edit": "Edit",
     "close": "Close",
-    "gotIt": "Got it"
+    "gotIt": "Got it",
+    "ok": "OK"
   },
   "onboarding": {
     "welcome": {
@@ -65,7 +66,13 @@
       "yearly": "Yearly",
       "wageRequired": "Wage amount is required",
       "wageNumber": "Wage must be a valid number",
-      "wagePositive": "Wage must be positive"
+      "wagePositive": "Wage must be positive",
+      "hoursPerWeekLabel": "Hours Per Week",
+      "hoursPerWeekPlaceholder": "Enter hours per week",
+      "hoursRequired": "Hours per week is required",
+      "hoursNumber": "Hours must be a valid number",
+      "hoursMin": "Hours must be at least 1",
+      "hoursMax": "Hours cannot exceed 168 per week"
     },
     "currency": {
       "title": "Choose your currency",
@@ -116,7 +123,9 @@
     "pricePositive": "Price must be positive",
     "labelRequired": "Please enter an item name",
     "userNotFound": "User profile not found",
-    "category": "Category"
+    "category": "Category",
+    "notesLabel": "Notes (Optional)",
+    "notesPlaceholder": "Add notes about this transaction..."
   },
   "result": {
     "purchaseRecorded": "Purchase Recorded",
@@ -138,6 +147,7 @@
     "noTransactions": "No transactions found",
     "noTransactionsDesc": "Start checking if items are worth it!",
     "tryDifferentSearch": "Try a different search query",
+    "premiumBanner": "✨ Showing last 3 months • Upgrade to Premium for unlimited history",
     "transactionDetail": {
       "purchase": "Purchase",
       "savings": "Savings",
@@ -172,6 +182,8 @@
     "compoundInterestRate": "Compound Interest Rate",
     "cute": "Cute",
     "professional": "Professional",
+    "workHoursPerDay": "Work Hours Per Day",
+    "workHoursValue": "{{count}} hours",
     "premiumItems": {
       "analytics": "📊 Analytics",
       "analyticsDesc": "View insights",
@@ -279,6 +291,9 @@
       "unlimitedHistory": "Unlimited History",
       "unlimitedHistoryDesc": "Access all your transactions, not just the last 3 months"
     },
+    "noPackageAvailable": "No package available. Please try again later.",
+    "somethingWentWrong": "Something went wrong",
+    "failedToRestore": "Failed to restore purchases",
     "upgradePrompt": "Upgrade to Premium",
     "upgradeMessage": "This feature is available with Premium. Unlock all advanced analytics and unlimited insights for just €1/month.",
     "freeTrialMessage": "Try Premium free for 7 days, then €1/month",
@@ -315,6 +330,11 @@
     "errorAmountInvalid": "Please enter a valid budget amount",
     "errorThresholdInvalid": "Alert threshold must be between 0 and 100",
     "warningExceeded": "⚠️ Warning: You've already spent {{percentage}}% of your {{period}}'s budget!",
+    "dailyBudget": "Daily Budget",
+    "weeklyBudget": "Weekly Budget",
+    "monthlyBudget": "Monthly Budget",
+    "overBudgetBy": "⚠️ Over budget by {{percent}}%",
+    "thresholdReached": "⚠️ {{threshold}}% threshold reached",
     "alert": {
       "title": "Budget Alert",
       "reached": "You've reached {{percentage}}% of your {{period}}'s budget.\n\n{{spent}} / {{budget}}",

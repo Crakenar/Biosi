@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 interface LoadingScreenProps {
   message?: string;
 }
 
-export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = 'Loading...' }) => {
+export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
+  const displayMessage = message ?? t('common.loading');
 
   return (
     <View
@@ -19,7 +22,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = 'Loading
       }}
     >
       <ActivityIndicator size="large" color={theme.colors.primary} />
-      {message && (
+      {displayMessage && (
         <Text
           style={{
             marginTop: theme.spacing.md,
@@ -27,7 +30,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = 'Loading
             color: theme.colors.textSecondary,
           }}
         >
-          {message}
+          {displayMessage}
         </Text>
       )}
     </View>

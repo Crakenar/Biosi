@@ -80,7 +80,7 @@ export function PremiumPurchaseScreen() {
     const packageToPurchase = selectedPlan === 'monthly' ? monthlyPackage : lifetimePackage;
 
     if (!packageToPurchase) {
-      setErrorMessage('No package available. Please try again later.');
+      setErrorMessage(t('premium.noPackageAvailable'));
       setShowErrorModal(true);
       return;
     }
@@ -104,7 +104,7 @@ export function PremiumPurchaseScreen() {
         setShowSuccessModal(true);
       }
     } catch (error: any) {
-      setErrorMessage(error.message || 'Something went wrong');
+      setErrorMessage(error.message || t('premium.somethingWentWrong'));
       setShowErrorModal(true);
     } finally {
       setPurchasing(false);
@@ -132,7 +132,7 @@ export function PremiumPurchaseScreen() {
         setShowErrorModal(true);
       }
     } catch (error: any) {
-      setErrorMessage(error.message || 'Failed to restore purchases');
+      setErrorMessage(error.message || t('premium.failedToRestore'));
       setShowErrorModal(true);
     } finally {
       setRestoring(false);
@@ -365,7 +365,7 @@ export function PremiumPurchaseScreen() {
         iconColor={theme.colors.primary}
         actions={[
           {
-            label: 'OK',
+            label: t('common.ok'),
             onPress: handleModalClose,
             variant: 'primary',
           },
@@ -383,7 +383,7 @@ export function PremiumPurchaseScreen() {
         iconColor={theme.colors.error}
         actions={[
           {
-            label: 'OK',
+            label: t('common.ok'),
             onPress: () => setShowErrorModal(false),
             variant: 'outline',
           },

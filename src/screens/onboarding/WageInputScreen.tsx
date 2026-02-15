@@ -205,19 +205,19 @@ export const WageInputScreen: React.FC = () => {
           <Controller
             control={control}
             rules={{
-              required: 'Hours per week is required',
+              required: t('onboarding.wage.hoursRequired'),
               validate: (value) => {
                 const hours = parseFloat(value);
-                if (isNaN(hours)) return 'Hours must be a valid number';
-                if (hours < 1) return 'Hours must be at least 1';
-                if (hours > 168) return 'Hours cannot exceed 168 per week';
+                if (isNaN(hours)) return t('onboarding.wage.hoursNumber');
+                if (hours < 1) return t('onboarding.wage.hoursMin');
+                if (hours > 168) return t('onboarding.wage.hoursMax');
                 return true;
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Hours Per Week"
-                placeholder="Enter hours per week"
+                label={t('onboarding.wage.hoursPerWeekLabel')}
+                placeholder={t('onboarding.wage.hoursPerWeekPlaceholder')}
                 keyboardType="decimal-pad"
                 onBlur={onBlur}
                 onChangeText={onChange}

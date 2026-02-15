@@ -140,7 +140,7 @@ export const TransactionHistoryScreen: React.FC = () => {
                             fontWeight: '600',
                             textAlign: 'center'
                         }}>
-                            ✨ Showing last 3 months • Upgrade to Premium for unlimited history
+                            {t('history.premiumBanner')}
                         </Text>
                     </TouchableOpacity>
                 )}

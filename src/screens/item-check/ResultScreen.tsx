@@ -240,10 +240,10 @@ export const ResultScreen: React.FC = () => {
 
   const isPurchase = type === 'purchased';
   const emoji = isPurchase ? '💸' : '🎉';
-  const title = isPurchase ? 'Purchase Recorded' : 'Great Choice!';
+  const title = isPurchase ? t('result.purchaseRecorded') : t('result.greatChoice');
   const message = isPurchase
-    ? `You spent ${formatHours(hours, settings.workHoursPerDay)} of work on this item.`
-    : `You saved ${formatHours(hours, settings.workHoursPerDay)} of work by not buying this item!`;
+    ? t('result.purchaseMessage', { hours: formatHours(hours, settings.workHoursPerDay) })
+    : t('result.saveMessage', { hours: formatHours(hours, settings.workHoursPerDay) });
 
   return (
     <View
@@ -300,7 +300,7 @@ export const ResultScreen: React.FC = () => {
                 color: theme.colors.textSecondary,
               }}
             >
-              Amount
+              {t('result.amount')}
             </Text>
             <Text
               style={{
@@ -328,7 +328,7 @@ export const ResultScreen: React.FC = () => {
                 color: theme.colors.textSecondary,
               }}
             >
-              Hours of Work
+              {t('result.hoursOfWork')}
             </Text>
             <Text
               style={{
@@ -342,7 +342,7 @@ export const ResultScreen: React.FC = () => {
           </View>
         </Card>
 
-        <Button title="Done" onPress={handleDone} size="large" />
+        <Button title={t('common.done')} onPress={handleDone} size="large" />
       </Animated.View>
 
       {/* Budget Alert Modal */}

@@ -221,7 +221,7 @@ export function BudgetScreen() {
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
-                      {budget.period.charAt(0).toUpperCase() + budget.period.slice(1)} Budget
+                      {t(`budget.${budget.period}Budget`)}
                     </Text>
                     <Text
                       style={[styles.budgetAmount, { color: theme.colors.textSecondary }]}
@@ -305,8 +305,8 @@ export function BudgetScreen() {
                   >
                     <Text style={styles.alertText}>
                       {isOverBudget
-                        ? `⚠️ Over budget by ${(percentage - 100).toFixed(0)}%`
-                        : `⚠️ ${budget.alertThreshold}% threshold reached`}
+                        ? t('budget.overBudgetBy', { percent: (percentage - 100).toFixed(0) })
+                        : t('budget.thresholdReached', { threshold: budget.alertThreshold })}
                     </Text>
                   </View>
                 )}

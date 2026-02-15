@@ -24,7 +24,7 @@ export const SettingsScreen: React.FC = () => {
     return null;
   }
 
-  const languageDisplayName = settings.language === 'en' ? 'English' : 'Français';
+  const languageDisplayName = settings.language === 'en' ? t('settings.languageSettings.english') : t('settings.languageSettings.french');
 
   const SettingItem = ({
     label,
@@ -267,8 +267,8 @@ export const SettingsScreen: React.FC = () => {
               }}
             />
             <SettingItem
-              label="Work Hours Per Day"
-              value={`${settings.workHoursPerDay} hours`}
+              label={t('settings.workHoursPerDay')}
+              value={t('settings.workHoursValue', { count: settings.workHoursPerDay })}
               icon="⏰"
               onPress={() => navigation.navigate('WorkHoursSettings')}
             />

@@ -109,7 +109,7 @@ export const ItemCheckModal: React.FC = () => {
   if (!user) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Loading...</Text>
+        <Text>{t('common.loading')}</Text>
       </View>
     );
   }
@@ -240,10 +240,10 @@ export const ItemCheckModal: React.FC = () => {
                 marginBottom: theme.spacing.sm,
               }}
             >
-              Notes (Optional)
+              {t('itemCheck.notesLabel')}
             </Text>
             <Input
-              placeholder="Add notes about this transaction..."
+              placeholder={t('itemCheck.notesPlaceholder')}
               value={note}
               onChangeText={setNote}
               multiline
