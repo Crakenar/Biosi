@@ -310,13 +310,13 @@ export const SettingsScreen: React.FC = () => {
                 marginTop: theme.spacing.xl,
               }}
             >
-              DEVELOPER
+              {t('settings.developer')}
             </Text>
             <Card variant="elevated">
               <View style={{ paddingVertical: theme.spacing.sm }}>
                 <SettingItem
-                  label="Dev Settings"
-                  value={DevTools.shouldForcePremium() ? 'Premium Forced' : 'Enabled'}
+                  label={t('settings.devSettings')}
+                  value={DevTools.shouldForcePremium() ? t('settings.premiumForced') : t('settings.enabled')}
                   icon="🛠️"
                   onPress={() => navigation.navigate('DevSettings')}
                 />

@@ -39,6 +39,8 @@ export const CurrencySettingsScreen: React.FC = () => {
     navigation.goBack();
   };
 
+  const { t } = useTranslation();
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={{ padding: theme.spacing.xl, paddingTop: theme.spacing.xxl * 1.5 }}>
@@ -50,7 +52,7 @@ export const CurrencySettingsScreen: React.FC = () => {
             marginBottom: theme.spacing.md,
           }}
         >
-          Change Currency
+          {t('settings.currencySettings.title')}
         </Text>
         <Text
           style={{
@@ -59,11 +61,11 @@ export const CurrencySettingsScreen: React.FC = () => {
             marginBottom: theme.spacing.lg,
           }}
         >
-          Select your preferred currency for displaying amounts.
+          {t('settings.currencySettings.description')}
         </Text>
 
         <Input
-          placeholder="Search currencies..."
+          placeholder={t('onboarding.currency.searchPlaceholder')}
           value={searchQuery}
           onChangeText={setSearchQuery}
           containerStyle={{ marginBottom: theme.spacing.md }}
@@ -127,9 +129,9 @@ export const CurrencySettingsScreen: React.FC = () => {
       />
 
       <View style={{ padding: theme.spacing.xl }}>
-        <Button title="Save" onPress={handleSave} size="large" />
+        <Button title={t('common.save')} onPress={handleSave} size="large" />
         <Button
-          title="Cancel"
+          title={t('common.cancel')}
           onPress={() => navigation.goBack()}
           variant="outline"
           size="large"

@@ -8,6 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useSettingsStore } from '../../store/settingsStore';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
+import { useTranslation } from 'react-i18next';
 
 type WorkHoursSettingsNavigationProp = StackNavigationProp<
   SettingsStackParamList,
@@ -21,6 +22,7 @@ interface WorkHoursForm {
 export const WorkHoursSettingsScreen: React.FC = () => {
   const navigation = useNavigation<WorkHoursSettingsNavigationProp>();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { settings, updateSettings } = useSettingsStore();
 
   const {
@@ -48,7 +50,7 @@ export const WorkHoursSettingsScreen: React.FC = () => {
         contentContainerStyle={{
           flexGrow: 1,
           padding: theme.spacing.xl,
-          paddingTop: theme.spacing.xxl * 1.5
+          paddingTop: theme.spacing.xxl * 1.5,
         }}
       >
         <Text
@@ -59,7 +61,7 @@ export const WorkHoursSettingsScreen: React.FC = () => {
             marginBottom: theme.spacing.md,
           }}
         >
-          Work Hours Per Day
+          {t('settings.workHoursPerDay')}
         </Text>
         <Text
           style={{
@@ -68,26 +70,25 @@ export const WorkHoursSettingsScreen: React.FC = () => {
             marginBottom: theme.spacing.xl,
           }}
         >
-          Set the number of hours in a work day. This is used to convert hours into work days
-          (e.g., 7 hours = 1 work day).
+          {t('settings.workHoursPerDayDesc')}
         </Text>
 
         <Controller
           control={control}
           rules={{
-            required: 'Work hours per day is required',
+            required: t('settings.workHoursRequired'),
             validate: (value) => {
               const hours = parseFloat(value);
-              if (isNaN(hours)) return 'Hours must be a valid number';
-              if (hours < 1) return 'Hours must be at least 1';
-              if (hours > 24) return 'Hours cannot exceed 24';
+              if (isNaN(hours)) return t('onboarding.wage.hoursNumber');
+              if (hours < 1) return t('onboarding.wage.hoursMin');
+              if (hours > 24) return t('settings.workHoursMax');
               return true;
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Work Hours Per Day"
-              placeholder="Enter hours (e.g., 7)"
+              label={t('settings.workHoursPerDay')}
+              placeholder={t('settings.workHoursPlaceholder')}
               keyboardType="decimal-pad"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -99,9 +100,9 @@ export const WorkHoursSettingsScreen: React.FC = () => {
         />
 
         <View style={{ marginTop: 'auto', paddingTop: theme.spacing.xl }}>
-          <Button title="Save Changes" onPress={handleSubmit(onSubmit)} size="large" />
+          <Button title={t('settings.editProfile.saveChanges')} onPress={handleSubmit(onSubmit)} size="large" />
           <Button
-            title="Cancel"
+            title={t('common.cancel')}
             onPress={() => navigation.goBack()}
             variant="outline"
             size="large"

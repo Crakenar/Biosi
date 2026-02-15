@@ -29,16 +29,17 @@ interface ProfileEditForm {
   hoursPerWeek: string;
 }
 
-const PERIODS: Array<{ value: 'hourly' | 'monthly' | 'yearly'; label: string }> = [
-  { value: 'hourly', label: 'Hourly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'yearly', label: 'Yearly' },
-];
-
 export const ProfileEditScreen: React.FC = () => {
   const navigation = useNavigation<ProfileEditNavigationProp>();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { user, updateUser } = useUserStore();
+
+  const PERIODS: Array<{ value: 'hourly' | 'monthly' | 'yearly'; label: string }> = [
+    { value: 'hourly', label: t('onboarding.wage.hourly') },
+    { value: 'monthly', label: t('onboarding.wage.monthly') },
+    { value: 'yearly', label: t('onboarding.wage.yearly') },
+  ];
 
   const [selectedPeriod, setSelectedPeriod] = useState<'hourly' | 'monthly' | 'yearly'>(
     user?.wage.period || 'hourly'
@@ -93,11 +94,9 @@ export const ProfileEditScreen: React.FC = () => {
         contentContainerStyle={{
           flexGrow: 1,
           padding: theme.spacing.xl,
-          paddingTop: theme.spacing.xxl * 1.5
-
+          paddingTop: theme.spacing.xxl * 1.5,
         }}
       >
-        {/* Header */}
         <Text
           style={{
             fontSize: theme.typography.sizes.xl,
@@ -106,7 +105,7 @@ export const ProfileEditScreen: React.FC = () => {
             marginBottom: theme.spacing.md,
           }}
         >
-          Edit Profile
+          {t('settings.editProfile.title')}
         </Text>
         <Text
           style={{
@@ -115,31 +114,30 @@ export const ProfileEditScreen: React.FC = () => {
             marginBottom: theme.spacing.xl,
           }}
         >
-          Update your profile information
+          {t('settings.editProfile.description')}
         </Text>
 
-        {/* Form */}
         <Controller
           control={control}
           rules={{
-            required: 'Name is required',
+            required: t('onboarding.profile.nameRequired'),
             minLength: {
               value: APP_CONFIG.VALIDATION.MIN_NAME_LENGTH,
-              message: 'Name must be at least 2 characters',
+              message: t('onboarding.profile.nameMin'),
             },
             maxLength: {
               value: APP_CONFIG.VALIDATION.MAX_NAME_LENGTH,
-              message: 'Name must be at most 50 characters',
+              message: t('onboarding.profile.nameMax'),
             },
             pattern: {
               value: /^[a-zA-Z\s]+$/,
-              message: 'Name can only contain letters and spaces',
+              message: t('onboarding.profile.namePattern'),
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Name"
-              placeholder="Enter your name"
+              label={t('settings.name')}
+              placeholder={t('onboarding.profile.namePlaceholder')}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -153,21 +151,21 @@ export const ProfileEditScreen: React.FC = () => {
         <Controller
           control={control}
           rules={{
-            required: 'Age is required',
+            required: t('onboarding.profile.ageRequired'),
             validate: (value) => {
               const age = parseInt(value, 10);
-              if (isNaN(age)) return 'Age must be a number';
+              if (isNaN(age)) return t('onboarding.profile.ageNumber');
               if (age < APP_CONFIG.VALIDATION.MIN_AGE)
-                return `Age must be at least ${APP_CONFIG.VALIDATION.MIN_AGE}`;
+                return t('onboarding.profile.ageMin', { min: APP_CONFIG.VALIDATION.MIN_AGE });
               if (age > APP_CONFIG.VALIDATION.MAX_AGE)
-                return `Age must be at most ${APP_CONFIG.VALIDATION.MAX_AGE}`;
+                return t('onboarding.profile.ageMax', { max: APP_CONFIG.VALIDATION.MAX_AGE });
               return true;
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Age"
-              placeholder="Enter your age"
+              label={t('settings.age')}
+              placeholder={t('onboarding.profile.agePlaceholder')}
               keyboardType="number-pad"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -182,18 +180,18 @@ export const ProfileEditScreen: React.FC = () => {
         <Controller
           control={control}
           rules={{
-            required: 'Wage amount is required',
+            required: t('onboarding.wage.wageRequired'),
             validate: (value) => {
               const amount = parseFloat(value);
-              if (isNaN(amount)) return 'Wage must be a valid number';
-              if (amount < APP_CONFIG.VALIDATION.MIN_WAGE) return 'Wage must be positive';
+              if (isNaN(amount)) return t('onboarding.wage.wageNumber');
+              if (amount < APP_CONFIG.VALIDATION.MIN_WAGE) return t('onboarding.wage.wagePositive');
               return true;
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Wage Amount"
-              placeholder="Enter amount"
+              label={t('onboarding.wage.wageLabel')}
+              placeholder={t('onboarding.wage.wagePlaceholder')}
               keyboardType="decimal-pad"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -213,7 +211,7 @@ export const ProfileEditScreen: React.FC = () => {
             marginBottom: theme.spacing.sm,
           }}
         >
-          Pay Period
+          {t('onboarding.wage.payPeriod')}
         </Text>
         <View style={styles.periodContainer}>
           {PERIODS.map((period) => (
@@ -249,19 +247,19 @@ export const ProfileEditScreen: React.FC = () => {
         <Controller
           control={control}
           rules={{
-            required: 'Hours per week is required',
+            required: t('onboarding.wage.hoursRequired'),
             validate: (value) => {
               const hours = parseFloat(value);
-              if (isNaN(hours)) return 'Hours must be a valid number';
-              if (hours < 1) return 'Hours must be at least 1';
-              if (hours > 168) return 'Hours cannot exceed 168 per week';
+              if (isNaN(hours)) return t('onboarding.wage.hoursNumber');
+              if (hours < 1) return t('onboarding.wage.hoursMin');
+              if (hours > 168) return t('onboarding.wage.hoursMax');
               return true;
             },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Hours Per Week"
-              placeholder="Enter hours per week"
+              label={t('onboarding.wage.hoursPerWeekLabel')}
+              placeholder={t('onboarding.wage.hoursPerWeekPlaceholder')}
               keyboardType="decimal-pad"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -274,9 +272,9 @@ export const ProfileEditScreen: React.FC = () => {
         />
 
         <View style={{ marginTop: 'auto', paddingTop: theme.spacing.xl }}>
-          <Button title="Save Changes" onPress={handleSubmit(onSubmit)} size="large" />
+          <Button title={t('settings.editProfile.saveChanges')} onPress={handleSubmit(onSubmit)} size="large" />
           <Button
-            title="Cancel"
+            title={t('common.cancel')}
             onPress={() => navigation.goBack()}
             variant="outline"
             size="large"

@@ -179,7 +179,7 @@ export const ThemeSelectionScreen: React.FC = () => {
                 marginBottom: 4,
               }}
             >
-              Sample Card
+              {t('settings.themeSelection.sampleCard')}
             </Text>
             <Text
               style={{

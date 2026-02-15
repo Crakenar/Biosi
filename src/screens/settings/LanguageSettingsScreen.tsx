@@ -127,12 +127,12 @@ export const LanguageSettingsScreen: React.FC = () => {
 
         <LanguageOption
           language="en"
-          label="English"
+          label={t('settings.languageSettings.english')}
           nativeName={t('settings.languageSettings.english')}
         />
         <LanguageOption
           language="fr"
-          label="Français"
+          label={t('settings.languageSettings.french')}
           nativeName={t('settings.languageSettings.french')}
         />
 
