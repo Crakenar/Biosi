@@ -34,12 +34,19 @@ export function calculateCompoundInterest(
 export function formatHours(hours: number, workHoursPerDay: number = APP_CONFIG.DEFAULT_WORK_HOURS_PER_DAY): string {
   if (hours < 1) {
     const minutes = Math.round(hours * 60);
+    if (minutes >= 60) {
+      return `1 hr`;
+    }
     return `${minutes} min`;
   }
 
   if (hours < workHoursPerDay) {
-    const wholeHours = Math.floor(hours);
-    const minutes = Math.round((hours - wholeHours) * 60);
+    let wholeHours = Math.floor(hours);
+    let minutes = Math.round((hours - wholeHours) * 60);
+    if (minutes === 60) {
+      wholeHours += 1;
+      minutes = 0;
+    }
     if (minutes === 0) {
       return `${wholeHours} hr${wholeHours !== 1 ? 's' : ''}`;
     }
@@ -47,9 +54,30 @@ export function formatHours(hours: number, workHoursPerDay: number = APP_CONFIG.
   }
 
   const days = Math.floor(hours / workHoursPerDay);
-  const remainingHours = Math.round(hours % workHoursPerDay);
-  if (remainingHours === 0) {
-    return `${days} work day${days !== 1 ? 's' : ''}`;
+  const remainingHoursRaw = hours - days * workHoursPerDay;
+  let remainingWholeHours = Math.floor(remainingHoursRaw);
+  let remainingMinutes = Math.round((remainingHoursRaw - remainingWholeHours) * 60);
+
+  // Handle rounding overflow
+  if (remainingMinutes === 60) {
+    remainingWholeHours += 1;
+    remainingMinutes = 0;
   }
-  return `${days} work day${days !== 1 ? 's' : ''} ${remainingHours} hr${remainingHours !== 1 ? 's' : ''}`;
+  if (remainingWholeHours >= workHoursPerDay) {
+    remainingWholeHours = 0;
+    remainingMinutes = 0;
+  }
+
+  const dayStr = `${days} day${days !== 1 ? 's' : ''}`;
+
+  if (remainingWholeHours === 0 && remainingMinutes === 0) {
+    return dayStr;
+  }
+  if (remainingMinutes === 0) {
+    return `${dayStr} ${remainingWholeHours} hr${remainingWholeHours !== 1 ? 's' : ''}`;
+  }
+  if (remainingWholeHours === 0) {
+    return `${dayStr} ${remainingMinutes} min`;
+  }
+  return `${dayStr} ${remainingWholeHours} hr${remainingWholeHours !== 1 ? 's' : ''} ${remainingMinutes} min`;
 }

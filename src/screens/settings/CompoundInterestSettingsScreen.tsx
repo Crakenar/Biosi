@@ -15,19 +15,21 @@ import { useUserStore } from '../../store/userStore';
 import { Button } from '../../components/common/Button';
 import { formatCurrency } from '../../utils/formatters';
 import { Modal } from '../../components/common/Modal';
-
-const PRESET_RATES = [
-  { label: 'Conservative', rate: 0.04, description: 'Low-risk investments (4%)' },
-  { label: 'Moderate', rate: 0.07, description: 'Balanced portfolio (7%)' },
-  { label: 'Aggressive', rate: 0.10, description: 'High-growth stocks (10%)' },
-];
+import { useTranslation } from 'react-i18next';
 
 export function CompoundInterestSettingsScreen() {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { settings, updateSettings } = useSettingsStore();
   const { transactions } = useTransactionStore();
   const { user } = useUserStore();
+
+  const PRESET_RATES = [
+    { label: t('compoundInterest.conservative'), rate: 0.04, description: t('compoundInterest.conservativeDesc') },
+    { label: t('compoundInterest.moderate'), rate: 0.07, description: t('compoundInterest.moderateDesc') },
+    { label: t('compoundInterest.aggressive'), rate: 0.10, description: t('compoundInterest.aggressiveDesc') },
+  ];
 
   const [customRate, setCustomRate] = useState((settings.compoundInterestRate * 100).toFixed(1));
   const [selectedPreset, setSelectedPreset] = useState<number | null>(
@@ -36,7 +38,6 @@ export function CompoundInterestSettingsScreen() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Calculate projections
   const totalSaved = transactions
     .filter((t) => t.type === 'saved')
     .reduce((sum, t) => sum + t.itemPrice, 0);
@@ -75,20 +76,20 @@ export function CompoundInterestSettingsScreen() {
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={[styles.backButton, { color: theme.colors.primary }]}>
-              ← Back
+              {t('compoundInterest.back')}
             </Text>
           </TouchableOpacity>
           <Text style={[styles.title, { color: theme.colors.text }]}>
-            Compound Interest Rate
+            {t('compoundInterest.screenTitle')}
           </Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            Adjust the interest rate to match your investment returns
+            {t('compoundInterest.subtitle')}
           </Text>
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Preset Rates
+            {t('compoundInterest.presetRates')}
           </Text>
           {PRESET_RATES.map((preset, index) => (
             <TouchableOpacity
@@ -107,10 +108,7 @@ export function CompoundInterestSettingsScreen() {
                 <Text
                   style={[
                     styles.presetLabel,
-                    {
-                      color:
-                        selectedPreset === index ? '#fff' : theme.colors.text,
-                    },
+                    { color: selectedPreset === index ? '#fff' : theme.colors.text },
                   ]}
                 >
                   {preset.label}
@@ -119,10 +117,9 @@ export function CompoundInterestSettingsScreen() {
                   style={[
                     styles.presetDescription,
                     {
-                      color:
-                        selectedPreset === index
-                          ? 'rgba(255,255,255,0.8)'
-                          : theme.colors.textSecondary,
+                      color: selectedPreset === index
+                        ? 'rgba(255,255,255,0.8)'
+                        : theme.colors.textSecondary,
                     },
                   ]}
                 >
@@ -132,10 +129,7 @@ export function CompoundInterestSettingsScreen() {
               <Text
                 style={[
                   styles.presetRate,
-                  {
-                    color:
-                      selectedPreset === index ? '#fff' : theme.colors.primary,
-                  },
+                  { color: selectedPreset === index ? '#fff' : theme.colors.primary },
                 ]}
               >
                 {(preset.rate * 100).toFixed(0)}%
@@ -146,7 +140,7 @@ export function CompoundInterestSettingsScreen() {
 
         <View style={[styles.section, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Custom Rate
+            {t('compoundInterest.customRate')}
           </Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -167,64 +161,59 @@ export function CompoundInterestSettingsScreen() {
             <Text style={[styles.percentSign, { color: theme.colors.text }]}>%</Text>
           </View>
           <Text style={[styles.hint, { color: theme.colors.textSecondary }]}>
-            Enter a custom annual return rate (0-100%)
+            {t('compoundInterest.customRateHint')}
           </Text>
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Projection Preview
+            {t('compoundInterest.projectionPreview')}
           </Text>
           <Text style={[styles.previewLabel, { color: theme.colors.textSecondary }]}>
-            Your savings: {user ? formatCurrency(totalSaved, user.currency) : `$${totalSaved}`}
+            {t('compoundInterest.yourSavings', {
+              amount: user ? formatCurrency(totalSaved, user.currency) : `$${totalSaved}`,
+            })}
           </Text>
           <Text style={[styles.previewLabel, { color: theme.colors.textSecondary }]}>
-            At {(currentRate * 100).toFixed(1)}% annual return:
+            {t('compoundInterest.atAnnualReturn', { rate: (currentRate * 100).toFixed(1) })}
           </Text>
 
           <View style={styles.projections}>
             <View style={styles.projectionItem}>
               <Text style={[styles.projectionYears, { color: theme.colors.textSecondary }]}>
-                10 Years
+                {t('dashboard.tenYears')}
               </Text>
               <Text style={[styles.projectionValue, { color: theme.colors.primary }]}>
                 {user
-                  ? formatCurrency(
-                      calculateCompoundInterest(totalSaved, currentRate, 10),
-                      user.currency
-                    )
+                  ? formatCurrency(calculateCompoundInterest(totalSaved, currentRate, 10), user.currency)
                   : `$${calculateCompoundInterest(totalSaved, currentRate, 10).toFixed(2)}`}
               </Text>
             </View>
             <View style={styles.projectionItem}>
               <Text style={[styles.projectionYears, { color: theme.colors.textSecondary }]}>
-                20 Years
+                {t('dashboard.twentyYears')}
               </Text>
               <Text style={[styles.projectionValue, { color: theme.colors.primary }]}>
                 {user
-                  ? formatCurrency(
-                      calculateCompoundInterest(totalSaved, currentRate, 20),
-                      user.currency
-                    )
+                  ? formatCurrency(calculateCompoundInterest(totalSaved, currentRate, 20), user.currency)
                   : `$${calculateCompoundInterest(totalSaved, currentRate, 20).toFixed(2)}`}
               </Text>
             </View>
           </View>
         </View>
 
-        <Button title="Save Changes" onPress={handleSave} size="large" />
+        <Button title={t('compoundInterest.saveChanges')} onPress={handleSave} size="large" />
       </View>
 
-      {/* Modals */}
       <Modal
         visible={showErrorModal}
         onClose={() => setShowErrorModal(false)}
-        title="Invalid Rate"
-        message="Please enter a rate between 0 and 100"
+        title={t('compoundInterest.invalidRate')}
+        message={t('compoundInterest.invalidRateMessage')}
         icon="❌"
         iconColor="#FF6B6B"
         actions={[
-          { label: 'OK', onPress: () => setShowErrorModal(false), variant: 'primary' },
+          { label: t('common.ok'), onPress: () => setShowErrorModal(false), variant: 'primary' },
         ]}
       />
 
@@ -234,13 +223,13 @@ export function CompoundInterestSettingsScreen() {
           setShowSuccessModal(false);
           navigation.goBack();
         }}
-        title="Success"
-        message="Interest rate updated successfully"
+        title={t('compoundInterest.successTitle')}
+        message={t('compoundInterest.successMessage')}
         icon="✅"
         iconColor="#4ECDC4"
         actions={[
           {
-            label: 'OK',
+            label: t('common.ok'),
             onPress: () => {
               setShowSuccessModal(false);
               navigation.goBack();

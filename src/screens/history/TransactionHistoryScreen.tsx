@@ -39,7 +39,7 @@ export const TransactionHistoryScreen: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [refreshing, setRefreshing] = useState(false);
 
-    const filteredTransactions = useMemo(() => {
+    const visibleTransactions = useMemo(() => {
         let result = [...transactions];
 
         // Apply 3-month limit for free users
@@ -47,6 +47,12 @@ export const TransactionHistoryScreen: React.FC = () => {
             const threeMonthsAgo = subMonths(new Date(), 3);
             result = result.filter((t) => isAfter(new Date(t.timestamp), threeMonthsAgo));
         }
+
+        return result;
+    }, [transactions, settings.isPremium]);
+
+    const filteredTransactions = useMemo(() => {
+        let result = [...visibleTransactions];
 
         if (filter !== 'all') {
             result = result.filter((t) => t.type === filter);
@@ -62,9 +68,10 @@ export const TransactionHistoryScreen: React.FC = () => {
         }
 
         return result.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    }, [transactions, filter, searchQuery, settings.isPremium]);
+    }, [visibleTransactions, filter, searchQuery]);
 
-    const stats = useMemo(() => aggregateTransactions(filteredTransactions), [filteredTransactions]);
+    // Stats always computed on all visible transactions, independent of filters
+    const stats = useMemo(() => aggregateTransactions(visibleTransactions), [visibleTransactions]);
 
     const onRefresh = () => {
         setRefreshing(true);

@@ -1,35 +1,54 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useCompoundInterest } from '../../hooks/useCompoundInterest';
 import { useUserStore } from '../../store/userStore';
 import { formatCurrency } from '../../utils/formatters';
 import { useTranslation } from 'react-i18next';
+import { Modal } from '../common/Modal';
 
 export const CompoundInterestChart: React.FC = () => {
   const { theme } = useTheme();
   const { user } = useUserStore();
   const { tenYear, twentyYear, principal, rate } = useCompoundInterest();
   const { t } = useTranslation();
+  const [showInfo, setShowInfo] = useState(false);
 
   if (!user) return null;
 
   const maxValue = Math.max(tenYear, twentyYear, 1);
-  const tenYearHeight = (tenYear / maxValue) * 150; // Reduced from 180 to give more space
+  const tenYearHeight = (tenYear / maxValue) * 150;
   const twentyYearHeight = (twentyYear / maxValue) * 150;
 
   return (
     <View style={{ padding: theme.spacing.lg }}>
-      <Text
-        style={{
-          fontSize: theme.typography.sizes.lg,
-          fontWeight: 'bold',
-          color: theme.colors.text,
-          marginBottom: theme.spacing.lg,
-        }}
-      >
-        Compound Interest ({(rate * 100).toFixed(1)}%)
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.lg }}>
+        <Text
+          style={{
+            fontSize: theme.typography.sizes.lg,
+            fontWeight: 'bold',
+            color: theme.colors.text,
+            flex: 1,
+          }}
+        >
+          {t('compoundInterest.title', { rate: (rate * 100).toFixed(1) })}
+        </Text>
+        <TouchableOpacity
+          onPress={() => setShowInfo(true)}
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            backgroundColor: theme.colors.surface,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.colors.textSecondary }}>i</Text>
+        </TouchableOpacity>
+      </View>
 
       {principal === 0 ? (
         <Text
@@ -74,7 +93,6 @@ export const CompoundInterestChart: React.FC = () => {
             </View>
           </View>
 
-          {/* Labels below the chart */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
             <View style={{ alignItems: 'center', flex: 1 }}>
               <Text
@@ -120,6 +138,22 @@ export const CompoundInterestChart: React.FC = () => {
           </View>
         </View>
       )}
+
+      <Modal
+        visible={showInfo}
+        onClose={() => setShowInfo(false)}
+        title={t('compoundInterest.infoTitle')}
+        message={t('compoundInterest.infoMessage')}
+        icon="📈"
+        iconColor={theme.colors.primary}
+        actions={[
+          {
+            label: t('common.gotIt'),
+            onPress: () => setShowInfo(false),
+            variant: 'primary',
+          },
+        ]}
+      />
     </View>
   );
 };
